@@ -44,6 +44,10 @@ La "definition" debe ser clara, concisa y estilo diccionario.
 
     const text = response.text;
 
+    if (!text) {
+      throw new Error('No text returned from Gemini API.');
+    }
+
     // Safety check: parse the JSON to make sure it's valid before sending
     const parsedData = JSON.parse(text);
 
