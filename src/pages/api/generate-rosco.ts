@@ -17,20 +17,22 @@ export const POST: APIRoute = async ({ request }) => {
     // We use gemini-2.5-flash as this is the only allowed model on the free tier for new API keys right now
     const prompt = `
 Eres un creador experto de roscos para el juego Pasapalabra en español.
-Genera un rosco completo de 27 letras (A-Z, incluyendo la Ñ, omitiendo la K o W si es muy difícil, o incluyéndola con "contiene la").
+Genera un rosco completo de 27 letras. Para hacer el juego más dinámico e impredecible, DEBES mezclar palabras que empiecen por la letra y palabras que la contengan. 
+No uses solo "empieza por", atrévete a usar "contiene la" en varias letras comunes (ej. "contiene la A", "contiene la E") y obligatoriamente para letras raras como X, Y, Z.
+
 Tu única respuesta debe ser un arreglo JSON estricto. No incluyas markdown, bloques de código (\`\`\`json), saludos ni nada extra. SOLO el JSON.
 
 El formato de cada objeto del arreglo debe ser exactamente este:
 {
   "letter": "A",
-  "word": "Adivinanza",
-  "definition": "Dicho popular, que se formula en forma de rima, en el que se describe una cosa para que sea adivinada.",
-  "type": "STARTS_WITH" // o "INCLUDES" para letras como la X o la W si la palabra no empieza por ellas.
+  "word": "Ondear",
+  "definition": "Moverse algo, especialmente una bandera, formando ondas.",
+  "type": "INCLUDES" // Usa "STARTS_WITH" si empieza por la letra, o "INCLUDES" si la contiene. ¡Usa una buena mezcla de ambos!
 }
 
-Asegúrate de generar exactamente 27 objetos, uno para cada letra del abecedario español (A, B, C, D, E, F, G, H, I, J, L, M, N, Ñ, O, P, Q, R, S, T, U, V, X, Y, Z - puedes omitir K y W si quieres, pero intenta llegar a unas 25-27 letras). La longitud ideal es 27 letras incluyendo la Ñ.
-La "word" debe ser una palabra válida en español.
-La "definition" debe ser clara, concisa y estilo diccionario.
+Asegúrate de generar exactamente 27 objetos, uno para cada letra del abecedario español (A, B, C, D, E, F, G, H, I, J, L, M, N, Ñ, O, P, Q, R, S, T, U, V, X, Y, Z - puedes omitir K y W si es muy difícil, pero la longitud ideal es 25-27 letras).
+La "word" debe ser una palabra válida en el diccionario español.
+La "definition" debe ser clara, concisa y referirse inequívocamente a la palabra.
 `;
 
     const response = await ai.models.generateContent({
@@ -60,8 +62,22 @@ La "definition" debe ser clara, concisa y estilo diccionario.
 
   } catch (error: any) {
     console.error('Error generating rosco:', error);
-    return new Response(JSON.stringify({ error: error.message || 'Internal Server Error' }), {
-      status: 500,
+    
+    // Detect Gemini Rate Limits and Quota Exceeded (429)
+    let errorMessage = error.message || 'Error interno al comunicarse con Gemini.';
+    let statusCode = 500;
+    
+    if (
+      errorMessage.includes('429') || 
+      errorMessage.toLowerCase().includes('quota') || 
+      errorMessage.toLowerCase().includes('rate limit')
+    ) {
+      errorMessage = '⚠️ Has agotado tu límite gratuito diario de peticiones a Gemini (20 roscos). ¡Vuelve a intentarlo mañana!';
+      statusCode = 429;
+    }
+
+    return new Response(JSON.stringify({ error: errorMessage }), {
+      status: statusCode,
       headers: {
         'Content-Type': 'application/json'
       }
