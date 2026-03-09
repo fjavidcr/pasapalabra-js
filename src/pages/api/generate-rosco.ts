@@ -14,7 +14,7 @@ export const POST: APIRoute = async ({ request }) => {
 
     const ai = new GoogleGenAI({ apiKey: apiKey });
 
-    // We use gemini-1.5-pro as requested by the user, who has Google AI Pro
+    // We use gemini-2.5-flash as this is the only allowed model on the free tier for new API keys right now
     const prompt = `
 Eres un creador experto de roscos para el juego Pasapalabra en español.
 Genera un rosco completo de 27 letras (A-Z, incluyendo la Ñ, omitiendo la K o W si es muy difícil, o incluyéndola con "contiene la").
@@ -34,7 +34,7 @@ La "definition" debe ser clara, concisa y estilo diccionario.
 `;
 
     const response = await ai.models.generateContent({
-      model: 'gemini-1.5-pro',
+      model: 'gemini-2.5-flash',
       contents: prompt,
       config: {
         temperature: 0.7,

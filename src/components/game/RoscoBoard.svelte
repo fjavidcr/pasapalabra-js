@@ -1,6 +1,6 @@
 <script lang="ts">
   import { getGameState } from "$lib/state/game.svelte";
-
+  import { cn } from "$lib/utils";
   const game = getGameState();
 
   function getPositionStyle(index: number, total: number, radius: number) {
@@ -17,24 +17,18 @@
 >
   {#each game.words as item, i (i)}
     <div
-      class="absolute flex flex-col items-center justify-center rounded-full font-bold text-lg transition-all duration-300 shadow-sm"
+      class={cn(
+        "absolute flex flex-col items-center justify-center rounded-full font-extrabold text-xl transition-all duration-500 shadow-md text-white border-[3px] backdrop-blur-sm",
+        item.status === 'unanswered' || item.status === 'passed' ? "bg-slate-800/80 border-indigo-400" : "",
+        i === game.currentIndex && item.status !== 'correct' && item.status !== 'incorrect' ? "border-white bg-indigo-500 shadow-[0_0_25px_rgba(99,102,241,0.9)] z-20 animate-pulse" : "",
+        item.status === 'correct' ? "bg-green-500 border-green-400 shadow-[0_0_20px_rgba(74,222,128,0.7)]" : "",
+        item.status === 'incorrect' ? "bg-red-500 border-red-400 shadow-[0_0_20px_rgba(248,113,113,0.7)]" : ""
+      )}
       style="{getPositionStyle(i, game.words.length, game.roscoSize / 2)}
-             width: 38px; height: 38px;
+             width: 44px; height: 44px;
              top: 50%; left: 50%;
-             transform: translate(-50%, -50%) {i === game.currentIndex && item.status !== 'correct' && item.status !== 'incorrect' ? 'scale(1.35)' : 'scale(1)'};
+             transform: translate(-50%, -50%) {i === game.currentIndex && item.status !== 'correct' && item.status !== 'incorrect' ? 'scale(1.4)' : 'scale(1)'};
              z-index: {i === game.currentIndex ? 10 : 1};"
-      class:bg-slate-800={item.status === 'unanswered' || item.status === 'passed'}
-      class:text-white={true}
-      class:border-2={true}
-      class:border-blue-500={item.status === 'unanswered' || item.status === 'passed'}
-      class:border-white={i === game.currentIndex && item.status !== 'correct' && item.status !== 'incorrect'}
-      class:shadow-[0_0_20px_rgba(59,130,246,0.8)]={i === game.currentIndex && item.status !== 'correct' && item.status !== 'incorrect'}
-      class:bg-green-500={item.status === 'correct'}
-      class:border-green-500={item.status === 'correct'}
-      class:shadow-[0_0_15px_rgba(34,197,94,0.5)]={item.status === 'correct'}
-      class:bg-red-500={item.status === 'incorrect'}
-      class:border-red-500={item.status === 'incorrect'}
-      class:shadow-[0_0_15px_rgba(239,68,68,0.5)]={item.status === 'incorrect'}
     >
       {item.letter.toUpperCase()}
     </div>

@@ -7,26 +7,31 @@
   const game = getGameState();
 </script>
 
-<Card class="w-full text-center max-w-lg border-2 shadow-xl animate-in fade-in slide-in-from-bottom-4 duration-500">
-  <CardHeader>
-    <CardTitle class="text-4xl font-extrabold tracking-tight">¡Juego Terminado!</CardTitle>
-    <CardDescription class="text-lg mt-2">Aquí tienes los resultados de tu rosco</CardDescription>
+<Card class="w-full text-center max-w-lg glass-card animate-in fade-in slide-in-from-bottom-8 duration-700">
+  <CardHeader class="pb-2">
+    <CardTitle class="text-5xl font-extrabold tracking-tight">
+      <span class="bg-clip-text text-transparent bg-gradient-to-br from-amber-500 to-orange-400">¡Juego Terminado!</span>
+    </CardTitle>
+    <CardDescription class="text-xl mt-3 font-medium">Resumen de tu puntuación</CardDescription>
   </CardHeader>
-  <CardContent class="flex flex-col gap-8 py-8 border-y bg-slate-50/50 dark:bg-slate-900/50">
+  <CardContent class="flex flex-col gap-8 py-10 my-4 border-y border-border/50 bg-slate-50/30 dark:bg-slate-900/30">
     <div class="flex justify-center gap-12">
       <div class="flex flex-col items-center gap-3">
-        <span class="text-sm text-green-600 dark:text-green-400 font-bold uppercase tracking-wider">Acertadas</span>
-        <Badge variant="default" class="bg-green-500 hover:bg-green-600 text-4xl px-6 py-2 shadow-lg shadow-green-500/20">{game.correctCount}</Badge>
+        <span class="text-sm text-green-600 dark:text-green-400 font-bold uppercase tracking-wider animate-in fade-in duration-500 delay-150 fill-mode-both">Acertadas</span>
+        <Badge variant="default" class="bg-green-500 hover:bg-green-600 text-4xl px-6 py-2 shadow-[0_0_20px_rgba(34,197,94,0.6)] animate-in zoom-in-50 slide-in-from-bottom-4 duration-500 delay-150 fill-mode-both">{game.correctCount}</Badge>
       </div>
       <div class="flex flex-col items-center gap-3">
-        <span class="text-sm text-red-600 dark:text-red-400 font-bold uppercase tracking-wider">Falladas</span>
-        <Badge variant="destructive" class="text-4xl px-6 py-2 shadow-lg shadow-red-500/20">{game.incorrectCount}</Badge>
+        <span class="text-sm text-red-600 dark:text-red-400 font-bold uppercase tracking-wider animate-in fade-in duration-500 delay-[300ms] fill-mode-both">Falladas</span>
+        <Badge variant="destructive" class="text-4xl px-6 py-2 shadow-[0_0_20px_rgba(239,68,68,0.6)] animate-in zoom-in-50 slide-in-from-bottom-4 duration-500 delay-[300ms] fill-mode-both">{game.incorrectCount}</Badge>
       </div>
     </div>
   </CardContent>
   <CardFooter class="justify-center pt-8">
-    <Button size="lg" onclick={() => game.restart()} class="w-full sm:w-2/3 h-14 text-lg font-bold shadow-md hover:scale-105 transition-transform">
-      Volver a Jugar
-    </Button>
+    <div class="relative group w-full sm:w-2/3">
+      <div class="absolute -inset-1 bg-gradient-to-r from-blue-500 to-indigo-500 rounded-lg blur opacity-30 group-hover:opacity-75 transition duration-500 group-hover:duration-200"></div>
+      <Button size="lg" onclick={() => game.restart()} class="relative w-full h-14 text-lg font-bold shadow-xl transition-all duration-300 hover:-translate-y-1">
+        Volver a Jugar
+      </Button>
+    </div>
   </CardFooter>
 </Card>
