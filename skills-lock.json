@@ -1,0 +1,20 @@
+{
+  "version": 1,
+  "skills": {
+    "astro": {
+      "source": "astrolicious/agent-skills",
+      "sourceType": "github",
+      "computedHash": "597a4587f30f1152d3ab2923e84db842a18604e09e16885ffa067730fb435d9d"
+    },
+    "shadcn": {
+      "source": "shadcn/ui",
+      "sourceType": "github",
+      "computedHash": "91c02eb706f046fb9d6a061efbb96496e4be751b5b14c283cf82baaa50f3a985"
+    },
+    "svelte-core-bestpractices": {
+      "source": "sveltejs/mcp",
+      "sourceType": "github",
+      "computedHash": "029f15399e7dbba15c9a8ed70bc7f9e6322d89a905efbdcc125443b37d087175"
+    }
+  }
+}
