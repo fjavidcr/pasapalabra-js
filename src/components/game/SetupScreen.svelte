@@ -9,7 +9,15 @@
 
   $effect(() => {
     game.setSecureToken(secureToken);
-    if (errorMsg) game.errorMsg = errorMsg;
+    if (errorMsg) {
+      game.errorMsg = errorMsg;
+      // Limpiar la URL de parámetros de error para que si el usuario recarga F5 no lo vuelva a ver
+      if (typeof window !== 'undefined' && window.location.search.includes('error=')) {
+        const url = new URL(window.location.href);
+        url.searchParams.delete('error');
+        window.history.replaceState({}, '', url.pathname + url.search);
+      }
+    }
   });
 </script>
 
