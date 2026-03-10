@@ -1,24 +1,25 @@
 ---
-import Layout from '../layouts/Layout.astro';
-import PasapalabraGame from '../components/PasapalabraGame.svelte';
-import '../styles/global.css';
-import CryptoJS from 'crypto-js';
+import Layout from '$layouts/Layout.astro';
+import SetupScreen from '$components/game/SetupScreen.svelte';
+import GameActive from '$components/game/GameActive.svelte';
+import { handleGameSSR } from '$lib/server/gameHandler';
+import '$styles/global.css';
 
-// Implementación de seguridad HMAC
-// Generamos un token en el servidor cuando se pide la página original
-const timestamp = Math.floor(Date.now() / 1000).toString();
-const secret = import.meta.env.API_SECRET_KEY;
+const { wordsPromise, setupErrorMsg, redirectRoute, secureToken } = await handleGameSSR(Astro.request);
 
-if (!secret) {
-	throw new Error("API_SECRET_KEY is missing in environment variables. Please check your .env file.");
+if (redirectRoute) {
+	return Astro.redirect(redirectRoute);
 }
-
-const signature = CryptoJS.HmacSHA256(timestamp, secret).toString(CryptoJS.enc.Hex);
-const secureToken = `${timestamp}.${signature}`;
 ---
 
 <Layout>
-	<main class="flex min-h-screen w-full flex-col items-center justify-center overflow-x-hidden">
-		<PasapalabraGame client:load secureToken={secureToken} />
+	<main class="flex min-h-screen w-full flex-col items-center justify-center overflow-x-hidden p-4 sm:p-8">
+		{wordsPromise ? (
+			wordsPromise
+				.then(words => <GameActive client:load secureToken={secureToken} initialWords={words} />)
+				.catch(err => <SetupScreen client:load secureToken={secureToken} errorMsg={err.message} />)
+		) : (
+			<SetupScreen client:load secureToken={secureToken} errorMsg={setupErrorMsg} />
+		)}
 	</main>
 </Layout>

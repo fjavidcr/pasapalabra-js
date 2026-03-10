@@ -10,7 +10,7 @@
 <Card class="w-full text-center max-w-lg glass-card animate-in fade-in slide-in-from-bottom-8 duration-700">
   <CardHeader class="pb-2">
     <CardTitle class="text-5xl font-extrabold tracking-tight">
-      <span class="bg-clip-text text-transparent bg-gradient-to-br from-amber-500 to-orange-400">¡Juego Terminado!</span>
+      <span class="bg-clip-text text-transparent bg-linear-to-br from-amber-500 to-orange-400">¡Juego Terminado!</span>
     </CardTitle>
     <CardDescription class="text-xl mt-3 font-medium">Resumen de tu puntuación</CardDescription>
   </CardHeader>
@@ -21,8 +21,8 @@
         <Badge variant="default" class="bg-green-500 hover:bg-green-600 text-4xl px-6 py-2 shadow-[0_0_20px_rgba(34,197,94,0.6)] animate-in zoom-in-50 slide-in-from-bottom-4 duration-500 delay-150 fill-mode-both">{game.correctCount}</Badge>
       </div>
       <div class="flex flex-col items-center gap-3">
-        <span class="text-sm text-red-600 dark:text-red-400 font-bold uppercase tracking-wider animate-in fade-in duration-500 delay-[300ms] fill-mode-both">Falladas</span>
-        <Badge variant="destructive" class="text-4xl px-6 py-2 shadow-[0_0_20px_rgba(239,68,68,0.6)] animate-in zoom-in-50 slide-in-from-bottom-4 duration-500 delay-[300ms] fill-mode-both">{game.incorrectCount}</Badge>
+        <span class="text-sm text-red-600 dark:text-red-400 font-bold uppercase tracking-wider animate-in fade-in duration-500 delay-300 fill-mode-both">Falladas</span>
+        <Badge variant="destructive" class="text-4xl px-6 py-2 shadow-[0_0_20px_rgba(239,68,68,0.6)] animate-in zoom-in-50 slide-in-from-bottom-4 duration-500 delay-300 fill-mode-both">{game.incorrectCount}</Badge>
       </div>
     </div>
 
@@ -47,7 +47,7 @@
   </CardContent>
   <CardFooter class="justify-center pt-8">
     <div class="relative group w-full sm:w-2/3">
-      <div class="absolute -inset-1 bg-gradient-to-r from-blue-500 to-indigo-500 rounded-lg blur opacity-30 group-hover:opacity-75 transition duration-500 group-hover:duration-200"></div>
+      <div class="absolute -inset-1 bg-linear-to-r from-blue-500 to-indigo-500 rounded-lg blur opacity-30 group-hover:opacity-75 transition duration-500 group-hover:duration-200"></div>
       <Button size="lg" onclick={() => game.restart()} class="relative w-full h-14 text-lg font-bold shadow-xl transition-all duration-300 hover:-translate-y-1">
         Volver a Jugar
       </Button>

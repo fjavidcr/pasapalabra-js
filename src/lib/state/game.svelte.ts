@@ -1,12 +1,5 @@
 import { getContext, setContext } from "svelte";
-
-export type WordItem = {
-    letter: string;
-    word: string;
-    definition: string;
-    type?: "STARTS_WITH" | "INCLUDES";
-    status: "unanswered" | "correct" | "incorrect" | "passed";
-};
+import type { WordItem, RoscoGenerateItem } from "$lib/types";
 
 export class GameState {
     status = $state<"setup" | "playing" | "results">("setup");
@@ -17,6 +10,14 @@ export class GameState {
     errorMsg = $state("");
     roscoSize = $state(320);
     secureToken = $state("");
+
+    constructor(initialWords?: RoscoGenerateItem[]) {
+        if (initialWords && initialWords.length > 0) {
+            this.words = initialWords.map(item => ({ ...item, status: 'unanswered' }));
+            this.status = "playing";
+            this.currentIndex = 0;
+        }
+    }
 
     setSecureToken(token: string) {
         this.secureToken = token;
@@ -115,10 +116,12 @@ export class GameState {
 
 const STATE_KEY = Symbol("GAME_STATE");
 
-export function setGameState() {
-    return setContext(STATE_KEY, new GameState());
+export function initGameState(initialWords?: RoscoGenerateItem[]) {
+    const state = new GameState(initialWords);
+    setContext(STATE_KEY, state);
+    return state;
 }
 
 export function getGameState() {
-    return getContext<ReturnType<typeof setGameState>>(STATE_KEY);
+    return getContext<ReturnType<typeof initGameState>>(STATE_KEY);
 }
