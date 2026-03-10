@@ -3,7 +3,7 @@ import Layout from '$layouts/Layout.astro';
 import SetupScreen from '$components/game/SetupScreen.svelte';
 import GameActive from '$components/game/GameActive.svelte';
 import { generateRoscoWords } from '$lib/server/gemini';
-import { generateSecureToken } from '$lib/server/security';
+import { generateSecureToken, validateSecureToken } from '$lib/server/security';
 import type { RoscoGenerateItem } from '$lib/types';
 import '$styles/global.css';
 
@@ -18,9 +18,23 @@ try {
 
 // Lógica SSR
 let wordsPromise: Promise<RoscoGenerateItem[]> | null = null;
+let setupErrorMsg: string | undefined = undefined;
+
 if (Astro.request.method === "POST") {
 	const formData = await Astro.request.formData();
-	wordsPromise = generateRoscoWords(formData);
+	const submittedToken = formData.get('secureToken') as string;
+	try {
+		// Validamos sincrónicamente para redirigir rápido si expiró (evitando el cuadro de reenviar formulario al refrescar)
+		validateSecureToken(submittedToken);
+		wordsPromise = generateRoscoWords(formData);
+	} catch (error: any) {
+		return Astro.redirect('/?error=expired');
+	}
+} else if (Astro.request.method === "GET") {
+	const url = new URL(Astro.request.url);
+	if (url.searchParams.get('error') === 'expired') {
+		setupErrorMsg = 'La sesión había expirado por inactividad, pero la hemos renovado automáticamente. Por favor, inténtalo de nuevo.';
+	}
 }
 ---
 
@@ -31,7 +45,7 @@ if (Astro.request.method === "POST") {
 				.then(words => <GameActive client:load secureToken={secureToken} initialWords={words} />)
 				.catch(err => <SetupScreen client:load secureToken={secureToken} errorMsg={err.message} />)
 		) : (
-			<SetupScreen client:load secureToken={secureToken} />
+			<SetupScreen client:load secureToken={secureToken} errorMsg={setupErrorMsg} />
 		)}
 	</main>
 </Layout>
