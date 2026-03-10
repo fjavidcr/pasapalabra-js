@@ -1,6 +1,7 @@
 ---
 import Layout from '$layouts/Layout.astro';
-import PasapalabraGame from '$components/PasapalabraGame.svelte';
+import SetupScreen from '$components/game/SetupScreen.svelte';
+import GameActive from '$components/game/GameActive.svelte';
 import { generateRoscoWords } from '$lib/server/gemini';
 import { generateSecureToken } from '$lib/server/security';
 import type { RoscoGenerateItem } from '$lib/types';
@@ -18,20 +19,19 @@ try {
 // Lógica SSR
 let wordsPromise: Promise<RoscoGenerateItem[]> | null = null;
 if (Astro.request.method === "POST") {
-	const formData = Astro.request.formData();
-	// Chain promise directly
-	wordsPromise = formData.then(data => generateRoscoWords(data));
+	const formData = await Astro.request.formData();
+	wordsPromise = generateRoscoWords(formData);
 }
 ---
 
 <Layout>
-	<main class="flex min-h-screen w-full flex-col items-center justify-center overflow-x-hidden">
+	<main class="flex min-h-screen w-full flex-col items-center justify-center overflow-x-hidden p-4 sm:p-8">
 		{wordsPromise ? (
 			wordsPromise
-				.then(words => <PasapalabraGame client:load secureToken={secureToken} initialWords={words} />)
-				.catch(err => <PasapalabraGame client:load secureToken={secureToken} errorMsg={err.message} />)
+				.then(words => <GameActive client:load secureToken={secureToken} initialWords={words} />)
+				.catch(err => <SetupScreen client:load secureToken={secureToken} errorMsg={err.message} />)
 		) : (
-			<PasapalabraGame client:load secureToken={secureToken} />
+			<SetupScreen client:load secureToken={secureToken} />
 		)}
 	</main>
 </Layout>

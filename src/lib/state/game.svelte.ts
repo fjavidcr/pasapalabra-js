@@ -116,10 +116,12 @@ export class GameState {
 
 const STATE_KEY = Symbol("GAME_STATE");
 
-export function setGameState(initialWords?: RoscoGenerateItem[]) {
-    return setContext(STATE_KEY, new GameState(initialWords));
+export function initGameState(initialWords?: RoscoGenerateItem[]) {
+    const state = new GameState(initialWords);
+    setContext(STATE_KEY, state);
+    return state;
 }
 
 export function getGameState() {
-    return getContext<ReturnType<typeof setGameState>>(STATE_KEY);
+    return getContext<ReturnType<typeof initGameState>>(STATE_KEY);
 }
