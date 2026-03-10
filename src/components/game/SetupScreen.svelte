@@ -25,14 +25,17 @@
     </p>
     <div class="relative group w-full mx-auto">
       <div class="absolute -inset-1 bg-gradient-to-r from-indigo-500 to-purple-500 rounded-xl blur opacity-50 group-hover:opacity-100 transition duration-500 group-hover:duration-200"></div>
-      <Button size="lg" disabled={game.loading} onclick={() => game.generateRosco()} class="relative w-full flex items-center justify-center gap-2 h-14 text-lg font-bold shadow-xl transition-all duration-300 hover:-translate-y-1">
-        {#if game.loading}
-        <LoaderCircle class="animate-spin" data-icon="inline-start" />
-        Generando Rosco...
-      {:else}
-        Generar Rosco
-      {/if}
-      </Button>
+      <form method="POST" onsubmit={() => { game.loading = true; }}>
+        <input type="hidden" name="secureToken" value={game.secureToken} />
+        <Button type="submit" size="lg" disabled={game.loading} class="relative w-full flex items-center justify-center gap-2 h-14 text-lg font-bold shadow-xl transition-all duration-300 hover:-translate-y-1">
+          {#if game.loading}
+          <LoaderCircle class="animate-spin" data-icon="inline-start" />
+          Generando Rosco...
+        {:else}
+          Generar Rosco
+        {/if}
+        </Button>
+      </form>
     </div>
   </CardContent>
 </Card>

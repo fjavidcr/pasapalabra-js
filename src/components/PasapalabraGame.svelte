@@ -1,16 +1,19 @@
 <script lang="ts">
   import { setGameState } from "$lib/state/game.svelte";
-  import SetupScreen from "./game/SetupScreen.svelte";
-  import RoscoBoard from "./game/RoscoBoard.svelte";
-  import GameControls from "./game/GameControls.svelte";
-  import ResultsScreen from "./game/ResultsScreen.svelte";
+  import SetupScreen from "$components/game/SetupScreen.svelte";
+  import RoscoBoard from "$components/game/RoscoBoard.svelte";
+  import GameControls from "$components/game/GameControls.svelte";
+  import ResultsScreen from "$components/game/ResultsScreen.svelte";
 
-  let { secureToken }: { secureToken: string } = $props();
+  let { secureToken, initialWords, errorMsg }: { secureToken: string, initialWords?: any[], errorMsg?: string } = $props();
 
   // Provide state context to all child components
-  const game = setGameState();
+  const game = setGameState(initialWords);
   $effect(() => {
     game.setSecureToken(secureToken);
+    if (errorMsg) {
+      game.errorMsg = errorMsg;
+    }
   });
 </script>
 

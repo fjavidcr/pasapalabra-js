@@ -1,15 +1,19 @@
-# Server-Side Rendering (SSR) del Rosco
+# Server-Side Rendering (SSR) con Streaming del Rosco
 
-El usuario ha solicitado que la página principal siga mostrando la pantalla de configuración primero, y que al hacer click en el botón "Generar Rosco", el sistema pida el rosco a Gemini en el servidor y devuelva el HTML de la página ya renderizado con el juego (SSR).
+El objetivo es implementar **Streaming SSR** en Astro para que la página cargue instantáneamente y el componente del juego se renderice en el servidor conforme Gemini genere las palabras.
 
-## Enfoque de la Solución (Formulario POST Híbrido)
+## Enfoque de la Solución (SSR Streaming)
 Para lograr este flujo en Astro + Svelte:
 
-1. **Pantalla inicial (GET `/`)**: [index.astro](file:///Users/fjavidcr/github/pasapalabra-js/src/pages/index.astro) carga instantáneamente y muestra la pantalla de Setup.
-2. **Acción del botón (POST)**: En lugar de hacer un `fetch` AJAX en segundo plano, el botón "Generar Rosco" será ahora un botón de tipo [submit](file:///Users/fjavidcr/github/pasapalabra-js/src/lib/state/game.svelte.ts#96-103) dentro de un formulario HTML (`<form method="POST">`).
-3. **Carga en el Servidor**: Al enviar el formulario, el navegador hace una petición al servidor. Astro detectará `Astro.request.method === "POST"`, validará el token de seguridad, y llamará a Gemini.
-4. **Respuesta HTML**: Una vez Gemini termine (3-8 segs), Astro renderiza y devuelve el HTML completo de la pantalla del rosco (`<RoscoBoard />`), inyectando las palabras directamente en el estado inicial de Svelte (`initialWords`).
-5. **Experiencia de Usuario (Spinner)**: Mantendremos el *spinner* en el botón. Al hacer clic, usaremos Svelte para cambiar el estado visual del botón a "Cargando..." mientras el navegador espera la respuesta POST del servidor.
+1. **Pantalla inicial (GET `/`)**: Muestra la pantalla de Setup.
+2. **Acción del botón (POST `/`)**: El formulario se envía a la misma página.
+3. **Streaming en el Servidor**:
+   - Astro detecta el POST.
+   - La página empieza a enviarse al navegador (Layout, cabeceras).
+   - Se usa una promesa (Promise) para llamar a Gemini.
+   - El componente del juego se "suspende" o se renderiza condicionalmente cuando la promesa se resuelve.
+4. **Respuesta Progresiva**: El navegador recibe el HTML base y, unos segundos después, el fragmento del juego sin recargar la página (o mediante una carga progresiva del stream).
+5. **Hidratación**: Una vez llega el HTML del juego, Svelte toma el control en el cliente.
 
 ## Proposed Changes
 
@@ -41,21 +45,23 @@ Para no duplicar código y poder llamarlo tanto desde Astro como desde la API (s
 #### [MODIFY] [src/pages/index.astro](file:///Users/fjavidcr/github/pasapalabra-js/src/pages/index.astro)
 - En el bloque del servidor `---`, detectar si es un POST:
   ```ts
-  let initialWords = null;
-  let errorMsg = null;
+  let wordsPromise = null;
   
   if (Astro.request.method === "POST") {
-      try {
-          // Extraer secureToken del FormData
-          // Validar el Token (misma lógica que había en el API route)
-          initialWords = await generateRoscoWords();
-      } catch (e) {
-          errorMsg = e.message;
-      }
+      const formData = await Astro.request.formData();
+      // Validar Token...
+      wordsPromise = generateRoscoWords(formData); // Retorna la Promesa directamente
   }
   ```
-- Pasar `initialWords` y (opcionalmente) `errorMsg` al componente `<PasapalabraGame />`.
-- Si hubo error, Svelte lo mostrará en el SetupScreen permitiendo reintentar. Si hubo éxito, Svelte renderizará directamente el tablero de juego en el HTML.
+- En el HTML, usar el componente del juego con la promesa:
+  ```astro
+  {wordsPromise ? (
+    <PasapalabraGame client:load wordsPromise={wordsPromise} />
+  ) : (
+    <SetupScreen client:load />
+  )}
+  ```
+- *Nota*: Para que el streaming funcione realmente bien en Cloudflare, nos aseguraremos de que el layout no bloquee el renderizado inicial.
 
 ---
 ### [DELETE] Archivo API Obsoleto

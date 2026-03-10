@@ -1,24 +1,37 @@
 ---
-import Layout from '../layouts/Layout.astro';
-import PasapalabraGame from '../components/PasapalabraGame.svelte';
-import '../styles/global.css';
-import CryptoJS from 'crypto-js';
+import Layout from '$layouts/Layout.astro';
+import PasapalabraGame from '$components/PasapalabraGame.svelte';
+import { generateRoscoWords } from '$lib/server/gemini';
+import { generateSecureToken } from '$lib/server/security';
+import type { RoscoGenerateItem } from '$lib/types';
+import '$styles/global.css';
 
 // Implementación de seguridad HMAC
-// Generamos un token en el servidor cuando se pide la página original
-const timestamp = Math.floor(Date.now() / 1000).toString();
-const secret = import.meta.env.API_SECRET_KEY;
-
-if (!secret) {
-	throw new Error("API_SECRET_KEY is missing in environment variables. Please check your .env file.");
+let secureToken = '';
+try {
+	secureToken = generateSecureToken();
+} catch (error) {
+	console.error('Error generating secure token', error);
+	// Handle error gracefully or throw if app cannot start
 }
 
-const signature = CryptoJS.HmacSHA256(timestamp, secret).toString(CryptoJS.enc.Hex);
-const secureToken = `${timestamp}.${signature}`;
+// Lógica SSR
+let wordsPromise: Promise<RoscoGenerateItem[]> | null = null;
+if (Astro.request.method === "POST") {
+	const formData = Astro.request.formData();
+	// Chain promise directly
+	wordsPromise = formData.then(data => generateRoscoWords(data));
+}
 ---
 
 <Layout>
 	<main class="flex min-h-screen w-full flex-col items-center justify-center overflow-x-hidden">
-		<PasapalabraGame client:load secureToken={secureToken} />
+		{wordsPromise ? (
+			wordsPromise
+				.then(words => <PasapalabraGame client:load secureToken={secureToken} initialWords={words} />)
+				.catch(err => <PasapalabraGame client:load secureToken={secureToken} errorMsg={err.message} />)
+		) : (
+			<PasapalabraGame client:load secureToken={secureToken} />
+		)}
 	</main>
 </Layout>
