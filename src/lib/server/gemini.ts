@@ -1,8 +1,10 @@
 import { GoogleGenAI, Type } from '@google/genai';
 import { validateSecureToken } from '$lib/server/security';
+import { DEFAULT_MODEL_ID } from '$lib/config/models';
 
 export async function generateRoscoWords(formData: FormData) {
   const secureToken = formData.get('secureToken') as string;
+  const modelId = (formData.get('modelId') as string) || DEFAULT_MODEL_ID;
   
   // Validar token antes de gastar recursos de la API
   validateSecureToken(secureToken);
@@ -28,7 +30,7 @@ La definición ("definition") debe ser clara, concisa y referirse inequívocamen
 
   try {
     const result = await ai.models.generateContent({
-      model: 'gemini-2.5-flash',
+      model: modelId,
       contents: prompt,
       config: {
         systemInstruction: systemInstruction,
@@ -62,7 +64,7 @@ La definición ("definition") debe ser clara, concisa y referirse inequívocamen
     console.error('Error generating rosco:', error);
     let errorMessage = error.message || 'Error interno al comunicarse con Gemini.';
     if (errorMessage.includes('429') || errorMessage.toLowerCase().includes('quota') || errorMessage.toLowerCase().includes('rate limit')) {
-      errorMessage = '⚠️ Has agotado tu límite gratuito diario de peticiones a Gemini (20 roscos). ¡Vuelve a intentarlo mañana!';
+      errorMessage = `[QUOTA_EXHAUSTED:${modelId}] ⚠️ Has agotado el límite para el modelo ${modelId}. Por favor, selecciona otro modelo.`;
     }
     throw new Error(errorMessage);
   }

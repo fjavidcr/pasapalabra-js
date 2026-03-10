@@ -10,12 +10,14 @@ export class GameState {
     errorMsg = $state("");
     roscoSize = $state(320);
     secureToken = $state("");
+    modelId = $state<string | undefined>(undefined);
 
-    constructor(initialWords?: RoscoGenerateItem[]) {
+    constructor(initialWords?: RoscoGenerateItem[], initialModelId?: string) {
         if (initialWords && initialWords.length > 0) {
             this.words = initialWords.map(item => ({ ...item, status: 'unanswered' }));
             this.status = "playing";
             this.currentIndex = 0;
+            this.modelId = initialModelId;
         }
     }
 
@@ -116,8 +118,8 @@ export class GameState {
 
 const STATE_KEY = Symbol("GAME_STATE");
 
-export function initGameState(initialWords?: RoscoGenerateItem[]) {
-    const state = new GameState(initialWords);
+export function initGameState(initialWords?: RoscoGenerateItem[], initialModelId?: string) {
+    const state = new GameState(initialWords, initialModelId);
     setContext(STATE_KEY, state);
     return state;
 }
