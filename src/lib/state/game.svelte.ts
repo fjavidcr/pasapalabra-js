@@ -16,6 +16,11 @@ export class GameState {
     loading = $state(false);
     errorMsg = $state("");
     roscoSize = $state(320);
+    secureToken = $state("");
+
+    setSecureToken(token: string) {
+        this.secureToken = token;
+    }
 
     get currentItem() {
         return this.words[this.currentIndex];
@@ -37,7 +42,12 @@ export class GameState {
         try {
             this.loading = true;
             this.errorMsg = "";
-            const res = await fetch('/api/generate-rosco', { method: 'POST' });
+            const res = await fetch('/api/generate-rosco', {
+                headers: {
+                    'x-pasapalabra-client': 'true',
+                    'x-secure-token': this.secureToken
+                }
+            });
             if (!res.ok) {
                 const errorData = await res.json();
                 throw new Error(errorData.error || 'Error en la petición');

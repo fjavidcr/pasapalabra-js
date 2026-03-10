@@ -5,8 +5,13 @@
   import GameControls from "./game/GameControls.svelte";
   import ResultsScreen from "./game/ResultsScreen.svelte";
 
+  let { secureToken }: { secureToken: string } = $props();
+
   // Provide state context to all child components
   const game = setGameState();
+  $effect(() => {
+    game.setSecureToken(secureToken);
+  });
 </script>
 
 <div class="flex flex-col items-center justify-center min-h-[80vh] w-full max-w-2xl mx-auto p-4 sm:p-8">

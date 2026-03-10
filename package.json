@@ -16,12 +16,14 @@
     "@google/genai": "^1.44.0",
     "@tailwindcss/vite": "^4.2.1",
     "astro": "^5.18.0",
+    "crypto-js": "^4.2.0",
     "svelte": "^5.53.8",
     "tailwindcss": "^4.2.1",
     "typescript": "^5.9.3"
   },
   "devDependencies": {
     "@lucide/svelte": "^0.577.0",
+    "@types/crypto-js": "^4.2.2",
     "clsx": "^2.1.1",
     "tailwind-merge": "^3.5.0",
     "tailwind-variants": "^3.2.2",

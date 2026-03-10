@@ -25,6 +25,25 @@
         <Badge variant="destructive" class="text-4xl px-6 py-2 shadow-[0_0_20px_rgba(239,68,68,0.6)] animate-in zoom-in-50 slide-in-from-bottom-4 duration-500 delay-[300ms] fill-mode-both">{game.incorrectCount}</Badge>
       </div>
     </div>
+
+    {#if game.words.filter(w => w.status === 'incorrect').length > 0}
+      <div class="mt-4 text-left w-full max-w-lg mx-auto animate-in fade-in slide-in-from-bottom-4 duration-500 delay-[600ms] fill-mode-both">
+        <h3 class="text-lg font-bold mb-3 text-slate-300 px-2">Has fallado:</h3>
+        <ul class="flex flex-col gap-3 max-h-[40vh] overflow-y-auto w-full pr-2 scrollbar-thin scrollbar-thumb-slate-700 scrollbar-track-transparent">
+          {#each game.words.filter(w => w.status === 'incorrect') as item}
+            <li class="p-4 rounded-xl bg-slate-900/40 border border-slate-700/50 flex flex-col gap-1 shadow-sm backdrop-blur-md">
+              <div class="flex items-center gap-3">
+                <span class="flex items-center justify-center size-8 rounded-full bg-red-500/20 text-red-400 font-bold border border-red-500/30 shrink-0 text-sm">
+                  {item.letter}
+                </span>
+                <span class="text-lg font-bold text-slate-100">{item.word}</span>
+              </div>
+              <p class="text-sm text-slate-400 mt-2 pl-11">{item.definition}</p>
+            </li>
+          {/each}
+        </ul>
+      </div>
+    {/if}
   </CardContent>
   <CardFooter class="justify-center pt-8">
     <div class="relative group w-full sm:w-2/3">
