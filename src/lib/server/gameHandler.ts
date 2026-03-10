@@ -1,16 +1,19 @@
 import { generateRoscoWords } from '$lib/server/gemini';
 import { generateSecureToken, validateSecureToken } from '$lib/server/security';
 import type { RoscoGenerateItem } from '$lib/types';
+import { AVAILABLE_MODELS } from '$lib/config/models';
 
 export async function handleGameSSR(request: Request): Promise<{
 	wordsPromise: Promise<RoscoGenerateItem[]> | null;
 	setupErrorMsg?: string;
 	redirectRoute?: string;
 	secureToken: string;
+	modelId?: string;
 }> {
 	let wordsPromise: Promise<RoscoGenerateItem[]> | null = null;
 	let setupErrorMsg: string | undefined = undefined;
 	let secureToken = '';
+	let modelId: string | undefined = undefined;
 
 	try {
 		secureToken = generateSecureToken();
@@ -22,10 +25,18 @@ export async function handleGameSSR(request: Request): Promise<{
 	if (request.method === "POST") {
 		const formData = await request.formData();
 		const submittedToken = formData.get('secureToken') as string;
+		const submittedModelId = formData.get('modelId') as string;
+		modelId = submittedModelId || undefined;
 		
 		try {
 			// Validamos sincrónicamente para redirigir rápido si expiró
 			validateSecureToken(submittedToken);
+			
+			// Validamos el modelo seleccionado
+			if (submittedModelId && !AVAILABLE_MODELS.some(m => m.id === submittedModelId)) {
+				throw new Error('Modelo no válido seleccionado.');
+			}
+
 			wordsPromise = generateRoscoWords(formData);
 		} catch (error: any) {
 			return { wordsPromise: null, secureToken, redirectRoute: '/?error=expired' };
@@ -37,5 +48,5 @@ export async function handleGameSSR(request: Request): Promise<{
 		}
 	}
 
-	return { wordsPromise, setupErrorMsg, secureToken };
+	return { wordsPromise, setupErrorMsg, secureToken, modelId };
 }
