@@ -1,10 +1,10 @@
 <script lang="ts">
-  import { Button } from "$lib/components/ui/button";
-  import { Input } from "$lib/components/ui/input";
-  import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "$lib/components/ui/card";
-  import { getGameState } from "$lib/state/game.svelte";
+import { Button } from '$lib/components/ui/button'
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '$lib/components/ui/card'
+import { Input } from '$lib/components/ui/input'
+import { getGameState } from '$lib/state/game.svelte'
 
-  const game = getGameState();
+const game = getGameState()
 </script>
 
 <Card class="w-full border-white/20 dark:border-white/10 glass-card animate-in slide-in-from-bottom-6 fade-in duration-500">

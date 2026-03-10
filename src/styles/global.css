@@ -117,16 +117,17 @@
   }
   body {
     @apply bg-background text-foreground min-h-screen relative overflow-x-hidden flex flex-col;
-    font-family: 'Outfit', sans-serif;
+    font-family: "Outfit", sans-serif;
   }
   body::before {
     content: "";
     @apply absolute inset-0 -z-10 pointer-events-none;
-    background: radial-gradient(circle at top left, rgba(79, 70, 229, 0.15), transparent 40%),
-                radial-gradient(circle at bottom right, rgba(147, 51, 234, 0.15), transparent 40%),
-                radial-gradient(circle at 50% 50%, rgba(15, 23, 42, 1), rgba(2, 6, 23, 1));
+    background:
+      radial-gradient(circle at top left, rgba(79, 70, 229, 0.15), transparent 40%),
+      radial-gradient(circle at bottom right, rgba(147, 51, 234, 0.15), transparent 40%),
+      radial-gradient(circle at 50% 50%, rgba(15, 23, 42, 1), rgba(2, 6, 23, 1));
   }
-  
+
   .glass-card {
     @apply bg-slate-900/40 backdrop-blur-2xl border border-white/10 shadow-[0_8px_32px_0_rgba(0,0,0,0.5)];
   }

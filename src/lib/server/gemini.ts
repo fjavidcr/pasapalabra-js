@@ -1,20 +1,20 @@
-import { GoogleGenAI, Type } from '@google/genai';
-import { validateSecureToken } from '$lib/server/security';
-import { DEFAULT_MODEL_ID } from '$lib/config/models';
+import { GoogleGenAI, Type } from '@google/genai'
+import { DEFAULT_MODEL_ID } from '$lib/config/models'
+import { validateSecureToken } from '$lib/server/security'
 
 export async function generateRoscoWords(formData: FormData) {
-  const secureToken = formData.get('secureToken') as string;
-  const modelId = (formData.get('modelId') as string) || DEFAULT_MODEL_ID;
-  
-  // Validar token antes de gastar recursos de la API
-  validateSecureToken(secureToken);
+  const secureToken = formData.get('secureToken') as string
+  const modelId = (formData.get('modelId') as string) || DEFAULT_MODEL_ID
 
-  const apiKey = import.meta.env.GEMINI_API_KEY;
+  // Validar token antes de gastar recursos de la API
+  validateSecureToken(secureToken)
+
+  const apiKey = import.meta.env.GEMINI_API_KEY
   if (!apiKey) {
-    throw new Error('GEMINI_API_KEY is not configured.');
+    throw new Error('GEMINI_API_KEY is not configured.')
   }
 
-  const ai = new GoogleGenAI({ apiKey: apiKey });
+  const ai = new GoogleGenAI({ apiKey: apiKey })
 
   const systemInstruction = `
 Eres un creador experto de roscos para el juego Pasapalabra en español.
@@ -24,9 +24,9 @@ No uses solo "empieza por", atrévete a usar "contiene la" en varias letras comu
 Asegúrate de generar exactamente 27 objetos, uno para cada letra del abecedario español (A, B, C, D, E, F, G, H, I, J, L, M, N, Ñ, O, P, Q, R, S, T, U, V, X, Y, Z - puedes omitir K y W si es muy difícil, pero la longitud ideal es 25-27 letras).
 La palabra ("word") debe ser una palabra válida en el diccionario español.
 La definición ("definition") debe ser clara, concisa y referirse inequívocamente a la palabra.
-`;
+`
 
-  const prompt = "Genera un nuevo rosco de nivel intermedio ahora.";
+  const prompt = 'Genera un nuevo rosco de nivel intermedio ahora.'
 
   try {
     const result = await ai.models.generateContent({
@@ -35,37 +35,55 @@ La definición ("definition") debe ser clara, concisa y referirse inequívocamen
       config: {
         systemInstruction: systemInstruction,
         temperature: 0.8,
-        responseMimeType: "application/json",
+        responseMimeType: 'application/json',
         responseSchema: {
           type: Type.ARRAY,
-          description: "Lista de 27 letras del rosco de Pasapalabra.",
+          description: 'Lista de 27 letras del rosco de Pasapalabra.',
           items: {
             type: Type.OBJECT,
             properties: {
-              letter: { type: Type.STRING, description: "Letra única del abecedario en mayúscula (ej: 'A', 'Ñ')." },
-              word: { type: Type.STRING, description: "La palabra a adivinar." },
-              definition: { type: Type.STRING, description: "La definición estilo diccionario de la palabra." },
-              type: { type: Type.STRING, enum: ["STARTS_WITH", "INCLUDES"], description: "Si la palabra empieza por la letra (STARTS_WITH) o si simplemente la contiene en el medio (INCLUDES)." }
+              letter: {
+                type: Type.STRING,
+                description: "Letra única del abecedario en mayúscula (ej: 'A', 'Ñ')."
+              },
+              word: {
+                type: Type.STRING,
+                description: 'La palabra a adivinar.'
+              },
+              definition: {
+                type: Type.STRING,
+                description: 'La definición estilo diccionario de la palabra.'
+              },
+              type: {
+                type: Type.STRING,
+                enum: ['STARTS_WITH', 'INCLUDES'],
+                description:
+                  'Si la palabra empieza por la letra (STARTS_WITH) o si simplemente la contiene en el medio (INCLUDES).'
+              }
             },
-            required: ["letter", "word", "definition", "type"]
+            required: ['letter', 'word', 'definition', 'type']
           }
         }
       }
-    });
+    })
 
-    const text = result.text;
+    const text = result.text
 
     if (!text) {
-      throw new Error('No text returned from Gemini API.');
+      throw new Error('No text returned from Gemini API.')
     }
 
-    return JSON.parse(text);
+    return JSON.parse(text)
   } catch (error: any) {
-    console.error('Error generating rosco:', error);
-    let errorMessage = error.message || 'Error interno al comunicarse con Gemini.';
-    if (errorMessage.includes('429') || errorMessage.toLowerCase().includes('quota') || errorMessage.toLowerCase().includes('rate limit')) {
-      errorMessage = `[QUOTA_EXHAUSTED:${modelId}] ⚠️ Has agotado el límite para el modelo ${modelId}. Por favor, selecciona otro modelo.`;
+    console.error('Error generating rosco:', error)
+    let errorMessage = error.message || 'Error interno al comunicarse con Gemini.'
+    if (
+      errorMessage.includes('429') ||
+      errorMessage.toLowerCase().includes('quota') ||
+      errorMessage.toLowerCase().includes('rate limit')
+    ) {
+      errorMessage = `[QUOTA_EXHAUSTED:${modelId}] ⚠️ Has agotado el límite para el modelo ${modelId}. Por favor, selecciona otro modelo.`
     }
-    throw new Error(errorMessage);
+    throw new Error(errorMessage)
   }
 }

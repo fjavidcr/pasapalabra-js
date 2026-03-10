@@ -1,21 +1,32 @@
 <script lang="ts">
-  import { initGameState } from "$lib/state/game.svelte";
-  import { untrack } from "svelte";
-  import type { RoscoGenerateItem } from "$lib/types";
-  import RoscoBoard from "./RoscoBoard.svelte";
-  import GameControls from "./GameControls.svelte";
-  import ResultsScreen from "./ResultsScreen.svelte";
-  import { AVAILABLE_MODELS } from "$lib/config/models";
+import { untrack } from 'svelte'
+import { AVAILABLE_MODELS } from '$lib/config/models'
+import { initGameState } from '$lib/state/game.svelte'
+import type { RoscoGenerateItem } from '$lib/types'
+import GameControls from './GameControls.svelte'
+import ResultsScreen from './ResultsScreen.svelte'
+import RoscoBoard from './RoscoBoard.svelte'
 
-  let { initialWords, secureToken, modelId }: { initialWords: RoscoGenerateItem[], secureToken: string, modelId?: string } = $props();
+let {
+  initialWords,
+  secureToken,
+  modelId
+}: {
+  initialWords: RoscoGenerateItem[]
+  secureToken: string
+  modelId?: string
+} = $props()
 
-  const game = initGameState(untrack(() => initialWords), untrack(() => modelId));
-  
-  let modelLabel = $derived(AVAILABLE_MODELS.find(m => m.id === game.modelId)?.label);
+const game = initGameState(
+  untrack(() => initialWords),
+  untrack(() => modelId)
+)
 
-  $effect(() => {
-    game.setSecureToken(secureToken);
-  });
+let modelLabel = $derived(AVAILABLE_MODELS.find((m) => m.id === game.modelId)?.label)
+
+$effect(() => {
+  game.setSecureToken(secureToken)
+})
 </script>
 
 {#if game.status === "playing"}

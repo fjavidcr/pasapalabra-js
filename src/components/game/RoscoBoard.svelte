@@ -1,14 +1,15 @@
 <script lang="ts">
-  import { getGameState } from "$lib/state/game.svelte";
-  import { cn } from "$lib/utils";
-  const game = getGameState();
+import { getGameState } from '$lib/state/game.svelte'
+import { cn } from '$lib/utils'
 
-  function getPosition(index: number, total: number, radius: number) {
-    const angle = (index / total) * 2 * Math.PI - (Math.PI / 2);
-    const x = Math.cos(angle) * radius;
-    const y = Math.sin(angle) * radius;
-    return { x, y };
-  }
+const game = getGameState()
+
+function getPosition(index: number, total: number, radius: number) {
+  const angle = (index / total) * 2 * Math.PI - Math.PI / 2
+  const x = Math.cos(angle) * radius
+  const y = Math.sin(angle) * radius
+  return { x, y }
+}
 </script>
 
 <div 

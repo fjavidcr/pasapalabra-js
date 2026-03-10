@@ -1,0 +1,19 @@
+{
+  "name": "Protect Release Tags (Immutable Releases)",
+  "target": "tag",
+  "enforcement": "active",
+  "conditions": {
+    "ref_name": {
+      "exclude": [],
+      "include": ["refs/tags/v*"]
+    }
+  },
+  "rules": [
+    {
+      "type": "deletion"
+    },
+    {
+      "type": "update"
+    }
+  ]
+}

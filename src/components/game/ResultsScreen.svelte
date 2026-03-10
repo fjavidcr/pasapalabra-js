@@ -1,10 +1,17 @@
 <script lang="ts">
-  import { Button } from "$lib/components/ui/button";
-  import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from "$lib/components/ui/card";
-  import { Badge } from "$lib/components/ui/badge";
-  import { getGameState } from "$lib/state/game.svelte";
+import { Badge } from '$lib/components/ui/badge'
+import { Button } from '$lib/components/ui/button'
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle
+} from '$lib/components/ui/card'
+import { getGameState } from '$lib/state/game.svelte'
 
-  const game = getGameState();
+const game = getGameState()
 </script>
 
 <Card class="w-full text-center max-w-lg glass-card animate-in fade-in slide-in-from-bottom-8 duration-700">

@@ -1,72 +1,72 @@
 <script lang="ts">
-  import { Button } from "$lib/components/ui/button";
-  import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "$lib/components/ui/card";
-  import { initGameState } from "$lib/state/game.svelte";
-  import { LoaderCircle } from "@lucide/svelte";
-  import { AVAILABLE_MODELS, DEFAULT_MODEL_ID, type GeminiModelId } from "$lib/config/models";
+import { LoaderCircle } from '@lucide/svelte'
+import { Button } from '$lib/components/ui/button'
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '$lib/components/ui/card'
+import { AVAILABLE_MODELS, DEFAULT_MODEL_ID, type GeminiModelId } from '$lib/config/models'
+import { initGameState } from '$lib/state/game.svelte'
 
-  let { secureToken, errorMsg }: { secureToken: string, errorMsg?: string } = $props();
-  const game = initGameState();
+let { secureToken, errorMsg }: { secureToken: string; errorMsg?: string } = $props()
+const game = initGameState()
 
-  let selectedModel = $state<GeminiModelId>(DEFAULT_MODEL_ID);
-  let exhaustedModels = $state<string[]>([]);
-  let modelsLoaded = $state(false);
+let selectedModel = $state<GeminiModelId>(DEFAULT_MODEL_ID)
+let exhaustedModels = $state<string[]>([])
+let modelsLoaded = $state(false)
 
-  $effect(() => {
-    // Solo cargar del localStorage si no lo hemos hecho aún en esta sesión
-    if (!modelsLoaded && typeof localStorage !== 'undefined') {
-      const stored = localStorage.getItem('pasapalabra_exhausted_models');
-      if (stored) {
-        try {
-          exhaustedModels = JSON.parse(stored);
-        } catch (e) {}
-      }
-      // Restaurar selección anterior si no está agotado
-      const storedModel = localStorage.getItem('pasapalabra_selected_model') as GeminiModelId;
-      if (storedModel && AVAILABLE_MODELS.some(m => m.id === storedModel)) {
-         if (!exhaustedModels.includes(storedModel)) {
-             selectedModel = storedModel;
-         }
-      }
-      modelsLoaded = true;
+$effect(() => {
+  // Solo cargar del localStorage si no lo hemos hecho aún en esta sesión
+  if (!modelsLoaded && typeof localStorage !== 'undefined') {
+    const stored = localStorage.getItem('pasapalabra_exhausted_models')
+    if (stored) {
+      try {
+        exhaustedModels = JSON.parse(stored)
+      } catch (e) {}
     }
-
-    game.setSecureToken(secureToken);
-    
-    if (errorMsg) {
-      // Check if it's a quota error for a specific model
-      const quotaMatch = errorMsg.match(/\[QUOTA_EXHAUSTED:(.*?)\] (.*)/);
-      if (quotaMatch) {
-         const failedModelId = quotaMatch[1];
-         game.errorMsg = quotaMatch[2];
-         
-         if (!exhaustedModels.includes(failedModelId)) {
-            const newExhausted = [...exhaustedModels, failedModelId];
-            exhaustedModels = newExhausted;
-            if (typeof localStorage !== 'undefined') {
-              localStorage.setItem('pasapalabra_exhausted_models', JSON.stringify(newExhausted));
-            }
-         }
-         
-         // Auto-select another available model if the current one is exhausted
-         if (selectedModel === failedModelId) {
-             const alternative = AVAILABLE_MODELS.find(m => !exhaustedModels.includes(m.id));
-             if (alternative) {
-                 selectedModel = alternative.id;
-             }
-         }
-      } else {
-         game.errorMsg = errorMsg;
-      }
-      
-      // Limpiar la URL de parámetros de error para que si el usuario recarga F5 no lo vuelva a ver
-      if (typeof window !== 'undefined' && window.location.search.includes('error=')) {
-        const url = new URL(window.location.href);
-        url.searchParams.delete('error');
-        window.history.replaceState({}, '', url.pathname + url.search);
+    // Restaurar selección anterior si no está agotado
+    const storedModel = localStorage.getItem('pasapalabra_selected_model') as GeminiModelId
+    if (storedModel && AVAILABLE_MODELS.some((m) => m.id === storedModel)) {
+      if (!exhaustedModels.includes(storedModel)) {
+        selectedModel = storedModel
       }
     }
-  });
+    modelsLoaded = true
+  }
+
+  game.setSecureToken(secureToken)
+
+  if (errorMsg) {
+    // Check if it's a quota error for a specific model
+    const quotaMatch = errorMsg.match(/\[QUOTA_EXHAUSTED:(.*?)\] (.*)/)
+    if (quotaMatch) {
+      const failedModelId = quotaMatch[1]
+      game.errorMsg = quotaMatch[2]
+
+      if (!exhaustedModels.includes(failedModelId)) {
+        const newExhausted = [...exhaustedModels, failedModelId]
+        exhaustedModels = newExhausted
+        if (typeof localStorage !== 'undefined') {
+          localStorage.setItem('pasapalabra_exhausted_models', JSON.stringify(newExhausted))
+        }
+      }
+
+      // Auto-select another available model if the current one is exhausted
+      if (selectedModel === failedModelId) {
+        const alternative = AVAILABLE_MODELS.find((m) => !exhaustedModels.includes(m.id))
+        if (alternative) {
+          selectedModel = alternative.id
+        }
+      }
+    } else {
+      game.errorMsg = errorMsg
+    }
+
+    // Limpiar la URL de parámetros de error para que si el usuario recarga F5 no lo vuelva a ver
+    if (typeof window !== 'undefined' && window.location.search.includes('error=')) {
+      const url = new URL(window.location.href)
+      url.searchParams.delete('error')
+      window.history.replaceState({}, '', url.pathname + url.search)
+    }
+  }
+})
 </script>
 
 <Card class="w-full mx-auto text-center max-w-lg border-white/10 glass-card animate-in fade-in slide-in-from-bottom-8 duration-700">

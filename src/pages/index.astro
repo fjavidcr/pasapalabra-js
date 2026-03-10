@@ -1,14 +1,16 @@
 ---
-import Layout from '$layouts/Layout.astro';
-import SetupScreen from '$components/game/SetupScreen.svelte';
-import GameActive from '$components/game/GameActive.svelte';
-import { handleGameSSR } from '$lib/server/gameHandler';
-import '$styles/global.css';
+import GameActive from '$components/game/GameActive.svelte'
+import SetupScreen from '$components/game/SetupScreen.svelte'
+import Layout from '$layouts/Layout.astro'
+import { handleGameSSR } from '$lib/server/gameHandler'
+import '$styles/global.css'
 
-const { wordsPromise, setupErrorMsg, redirectRoute, secureToken, modelId } = await handleGameSSR(Astro.request);
+const { wordsPromise, setupErrorMsg, redirectRoute, secureToken, modelId } = await handleGameSSR(
+  Astro.request
+)
 
 if (redirectRoute) {
-	return Astro.redirect(redirectRoute);
+  return Astro.redirect(redirectRoute)
 }
 ---
 
