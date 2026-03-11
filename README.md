@@ -1,46 +1,77 @@
-# Astro Starter Kit: Minimal
+# 🔵 Pasapalabra JS
 
-```sh
-npm create astro@latest -- --template minimal
-```
+Una implementación web moderna y optimizada del clásico juego de televisión "El Rosco de Pasapalabra". Desarrollado para ser rápido, reactivo y preparado para funcionar en la nube.
 
-> 🧑‍🚀 **Seasoned astronaut?** Delete this file. Have fun!
+## ✨ Características Principales
 
-## 🚀 Project Structure
+- **Generación Dinámica por IA**: Usa la API de Google Gemini (`@google/genai`) para generar preguntas y respuestas de cada palabra del rosco.
+- **Interfaz Reactiva**: Componentes interactivos y de alto rendimiento desarrollados con **Svelte 5**.
+- **Estilos Modernos**: Utiliza **Tailwind CSS v4** con integración de animaciones y variantes de Tailwind.
+- **Práctico y Seguro**: Implementa validación segura de tokens (HMAC/SHA256) y Server-Side Rendering (SSR).
+- **Edge-Ready**: Totalmente preparado para funcionar directamente en la red de **Cloudflare Workers**.
 
-Inside of your Astro project, you'll see the following folders and files:
+## 📂 Estructura del Proyecto
+
+El proyecto sigue una arquitectura optimizada para **Astro** y **Svelte**, separando claramente la lógica del servidor de la interfaz:
 
 ```text
 /
-├── public/
+├── public/                 # Assets estáticos (imágenes, favicons)
 ├── src/
-│   └── pages/
-│       └── index.astro
+│   ├── components/         # Componentes nativos de Astro
+│   ├── layouts/            # Plantillas maestras de las páginas
+│   ├── lib/
+│   │   ├── components/     # Componentes interactivos de Svelte 5
+│   │   ├── server/         # Lógica SSR, prompts de Gemini y utilidades de seguridad
+│   │   └── state/          # Gestión de estado reactivo global del juego
+│   ├── pages/              # Rutas principales de la aplicación (SSR)
+│   └── styles/             # Archivos de estilos (Tailwind CSS v4)
 └── package.json
 ```
 
-Astro looks for `.astro` or `.md` files in the `src/pages/` directory. Each page is exposed as a route based on its file name.
+## 🧞 Comandos Locales (Desarrollo)
 
-There's nothing special about `src/components/`, but that's where we like to put any Astro/React/Vue/Svelte/Preact components.
+Asegúrate de copiar el archivo de variables de entorno antes de iniciar:
+```sh
+cp .env.example .env
+```
+Y añade tus claves reales en el fichero `.env`. El `API_SECRET_KEY` puede ser cualquier cadena de texto aleatoria.
 
-Any static assets, like images, can be placed in the `public/` directory.
+Desde la raíz del proyecto, puedes ejecutar estos comandos:
 
-## 🧞 Commands
+| Comando                   | Descripción                                        |
+| :------------------------ | :------------------------------------------------- |
+| `npm install`             | Instala todas las dependencias                     |
+| `npm run dev`             | Inicia el servidor local en `localhost:4321`       |
+| `npm run build`           | Compila la versión de producción                   |
+| `npm run preview`         | Previsualiza el proyecto antes de desplegarlo      |
+| `npm run lint` / `format` | Verifica y formatea el código (ESLint, Prettier)   |
 
-All commands are run from the root of the project, from a terminal:
+## ☁️ Deployment (Cloudflare Workers)
 
-| Command                   | Action                                           |
-| :------------------------ | :----------------------------------------------- |
-| `npm install`             | Installs dependencies                            |
-| `npm run dev`             | Starts local dev server at `localhost:4321`      |
-| `npm run build`           | Build your production site to `./dist/`          |
-| `npm run preview`         | Preview your build locally, before deploying     |
-| `npm run astro ...`       | Run CLI commands like `astro add`, `astro check` |
-| `npm run astro -- --help` | Get help using the Astro CLI                     |
+This project is pre-configured to be deployed on **Cloudflare Workers**. You can deploy it manually directly from your terminal by following these steps:
 
-## 👀 Want to learn more?
+1. **Login to Cloudflare**
+   Authenticate the Astro CLI with your Cloudflare account:
+   ```sh
+   npx wrangler login
+   ```
 
-Feel free to check [our documentation](https://docs.astro.build) or jump into our [Discord server](https://astro.build/chat).
+2. **Configure Secrets**
+   Since the local `.env` file is ignored during deployment, you need to add your environment variables as secrets to your Cloudflare account:
+   ```sh
+   npx wrangler secret put GEMINI_API_KEY
+   npx wrangler secret put API_SECRET_KEY
+   ```
+   *(Paste the values when prompted)*
+
+3. **Deploy**
+   Run the deployment script, which will build the project and upload it:
+   ```sh
+   npm run deploy
+   ```
+   The terminal will output the public URL (e.g. `*.workers.dev`) where the app is live.
+
 
 ## 📄 License
 
