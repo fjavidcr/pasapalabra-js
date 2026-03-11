@@ -51,31 +51,52 @@ Desde la raíz del proyecto, puedes ejecutar estos comandos:
 
 ## ☁️ Deployment (Cloudflare Workers)
 
-This project is pre-configured to be deployed on **Cloudflare Workers**. You can deploy it manually directly from your terminal by following these steps:
+This project is pre-configured to be deployed on **Cloudflare Workers** with two separate environments: `preview` and `production`.
 
-1. **Login to Cloudflare**
-   Authenticate the Astro CLI with your Cloudflare account:
+### 1. Login to Cloudflare
 
-   ```sh
-   npx wrangler login
-   ```
+```sh
+npx wrangler login
+```
 
-2. **Configure Secrets**
-   Since the local `.env` file is ignored during deployment, you need to add your environment variables as secrets to your Cloudflare account:
+### 2. Create KV Namespaces for Sessions
 
-   ```sh
-   npx wrangler secret put GEMINI_API_KEY
-   npx wrangler secret put API_SECRET_KEY
-   ```
+The `@astrojs/cloudflare` adapter v12+ automatically enables session support via **Cloudflare KV**. You need to create two namespaces (one per environment) and add their IDs to `wrangler.jsonc`:
 
-   _(Paste the values when prompted)_
+```sh
+# Production namespace
+npx wrangler kv namespace create SESSION
 
-3. **Deploy**
-   Run the deployment script, which will build the project and upload it:
-   ```sh
-   npm run deploy
-   ```
-   The terminal will output the public URL (e.g. `*.workers.dev`) where the app is live.
+# Preview namespace (for local dev & preview deploys)
+npx wrangler kv namespace create SESSION --preview
+```
+
+Copy the generated IDs into `wrangler.jsonc` under the corresponding `env.production` and `env.preview` blocks, and into the top-level `kv_namespaces` entry (with `id` and `preview_id`).
+
+### 3. Configure Secrets
+
+Since the local `.env` file is not used by Cloudflare, secrets must be uploaded **separately for each worker**. Both workers (`pasapalabra-js` and `pasapalabra-js-preview`) require their own secrets:
+
+```sh
+# Production
+npx wrangler secret put GEMINI_API_KEY --env production
+npx wrangler secret put API_SECRET_KEY --env production
+
+# Preview
+npx wrangler secret put GEMINI_API_KEY --env preview
+npx wrangler secret put API_SECRET_KEY --env preview
+```
+
+> **Note:** In Cloudflare, each named worker has its own isolated secrets. Secrets set for `pasapalabra-js` are not available to `pasapalabra-js-preview` and vice versa.
+
+### 4. Deploy
+
+| Comando                  | Descripción                                          |
+| :----------------------- | :--------------------------------------------------- |
+| `npm run deploy:preview` | Build + deploy al worker de preview (`.workers.dev`) |
+| `npm run deploy:pro`     | Build + deploy al worker de producción               |
+
+When deploying to production, Wrangler may warn about differences with the remote config (e.g. a custom domain set via the dashboard). This is safe to confirm — the custom domain binding is managed independently by Cloudflare and will not be removed.
 
 ## 📄 License
 
