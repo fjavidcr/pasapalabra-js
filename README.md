@@ -32,20 +32,22 @@ El proyecto sigue una arquitectura optimizada para **Astro** y **Svelte**, separ
 ## 🧞 Comandos Locales (Desarrollo)
 
 Asegúrate de copiar el archivo de variables de entorno antes de iniciar:
+
 ```sh
 cp .env.example .env
 ```
+
 Y añade tus claves reales en el fichero `.env`. El `API_SECRET_KEY` puede ser cualquier cadena de texto aleatoria.
 
 Desde la raíz del proyecto, puedes ejecutar estos comandos:
 
-| Comando                   | Descripción                                        |
-| :------------------------ | :------------------------------------------------- |
-| `npm install`             | Instala todas las dependencias                     |
-| `npm run dev`             | Inicia el servidor local en `localhost:4321`       |
-| `npm run build`           | Compila la versión de producción                   |
-| `npm run preview`         | Previsualiza el proyecto antes de desplegarlo      |
-| `npm run lint` / `format` | Verifica y formatea el código (ESLint, Prettier)   |
+| Comando                   | Descripción                                      |
+| :------------------------ | :----------------------------------------------- |
+| `npm install`             | Instala todas las dependencias                   |
+| `npm run dev`             | Inicia el servidor local en `localhost:4321`     |
+| `npm run build`           | Compila la versión de producción                 |
+| `npm run preview`         | Previsualiza el proyecto antes de desplegarlo    |
+| `npm run lint` / `format` | Verifica y formatea el código (ESLint, Prettier) |
 
 ## ☁️ Deployment (Cloudflare Workers)
 
@@ -53,17 +55,20 @@ This project is pre-configured to be deployed on **Cloudflare Workers**. You can
 
 1. **Login to Cloudflare**
    Authenticate the Astro CLI with your Cloudflare account:
+
    ```sh
    npx wrangler login
    ```
 
 2. **Configure Secrets**
    Since the local `.env` file is ignored during deployment, you need to add your environment variables as secrets to your Cloudflare account:
+
    ```sh
    npx wrangler secret put GEMINI_API_KEY
    npx wrangler secret put API_SECRET_KEY
    ```
-   *(Paste the values when prompted)*
+
+   _(Paste the values when prompted)_
 
 3. **Deploy**
    Run the deployment script, which will build the project and upload it:
@@ -71,7 +76,6 @@ This project is pre-configured to be deployed on **Cloudflare Workers**. You can
    npm run deploy
    ```
    The terminal will output the public URL (e.g. `*.workers.dev`) where the app is live.
-
 
 ## 📄 License
 
