@@ -2,6 +2,24 @@
   "name": "pasapalabra-js",
   "type": "module",
   "version": "0.1.0",
+  "description": "El clásico juego del rosco en JavaScript",
+  "author": "Javi del Castillo",
+  "keywords": [
+    "pasapalabra",
+    "rosco",
+    "juego",
+    "javascript",
+    "astro",
+    "svelte"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/fjavidcr/pasapalabra-js.git"
+  },
+  "bugs": {
+    "url": "https://github.com/fjavidcr/pasapalabra-js/issues"
+  },
+  "license": "GPL-3.0",
   "scripts": {
     "dev": "astro dev",
     "build": "astro build",
