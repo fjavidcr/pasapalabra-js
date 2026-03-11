@@ -1,7 +1,7 @@
 ---
 name: ✨ Solicitud de Función
 about: Sugiere una idea para Pasapalabra JS
-title: "[FEATURE] "
+title: '[FEATURE] '
 labels: enhancement
 assignees: ''
 ---

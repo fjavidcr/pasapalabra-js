@@ -44,7 +44,7 @@ Feel free to check [our documentation](https://docs.astro.build) or jump into ou
 
 ## 📄 License
 
-This project is licensed under the **GNU General Public License v3.0**. 
+This project is licensed under the **GNU General Public License v3.0**.
 
 Copyright (C) 2026 Javi del Castillo.
 
