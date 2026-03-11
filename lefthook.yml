@@ -1,9 +1,13 @@
 pre-commit:
   parallel: true
   commands:
-    biome:
-      glob: "*.{js,ts,jsx,tsx,json,css,svelte,astro}"
-      run: npx @biomejs/biome check --write --no-errors-on-unmatched --files-ignore-unknown=true {staged_files}
+    prettier:
+      glob: '*.{js,ts,jsx,tsx,json,css,svelte,astro}'
+      run: npx prettier --write {staged_files}
+      stage_fixed: true
+    eslint:
+      glob: '*.{js,ts,jsx,tsx,svelte,astro}'
+      run: npx eslint --fix {staged_files}
       stage_fixed: true
 
 pre-push:

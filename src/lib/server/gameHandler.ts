@@ -38,7 +38,7 @@ export async function handleGameSSR(request: Request): Promise<{
       }
 
       wordsPromise = generateRoscoWords(formData)
-    } catch (error: any) {
+    } catch {
       return {
         wordsPromise: null,
         secureToken,

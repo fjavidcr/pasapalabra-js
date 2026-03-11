@@ -156,7 +156,8 @@ La definición ("definition") debe ser clara, concisa y referirse inequívocamen
         'Content-Type': 'application/json'
       }
     })
-  } catch (error: any) {
+  } catch (err: unknown) {
+    const error = err as Error
     console.error('Error generating rosco:', error)
 
     // Detect Gemini Rate Limits and Quota Exceeded (429)

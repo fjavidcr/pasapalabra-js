@@ -69,9 +69,10 @@ export class GameState {
       this.words = data.map((item) => ({ ...item, status: 'unanswered' }))
       this.currentIndex = 0
       this.status = 'playing'
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error(err)
-      this.errorMsg = `Error: ${err.message}. Revisa la consola o tu API Key.`
+      const errorMsg = err instanceof Error ? err.message : String(err)
+      this.errorMsg = `Error: ${errorMsg}. Revisa la consola o tu API Key.`
     } finally {
       this.loading = false
     }

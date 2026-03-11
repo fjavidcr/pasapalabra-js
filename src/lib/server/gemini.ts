@@ -74,7 +74,8 @@ La definición ("definition") debe ser clara, concisa y referirse inequívocamen
     }
 
     return JSON.parse(text)
-  } catch (error: any) {
+  } catch (err: unknown) {
+    const error = err as Error
     console.error('Error generating rosco:', error)
     let errorMessage = error.message || 'Error interno al comunicarse con Gemini.'
     if (
@@ -84,6 +85,6 @@ La definición ("definition") debe ser clara, concisa y referirse inequívocamen
     ) {
       errorMessage = `[QUOTA_EXHAUSTED:${modelId}] ⚠️ Has agotado el límite para el modelo ${modelId}. Por favor, selecciona otro modelo.`
     }
-    throw new Error(errorMessage)
+    throw new Error(errorMessage, { cause: err })
   }
 }

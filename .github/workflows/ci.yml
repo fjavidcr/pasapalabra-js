@@ -30,7 +30,10 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      - name: Linting (Biome)
+      - name: Formatting (Prettier)
+        run: npm run format:check
+
+      - name: Linting (ESLint)
         run: npm run lint
 
       - name: Type checking (Astro & Svelte)

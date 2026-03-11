@@ -1,6 +1,6 @@
-@import "tailwindcss";
+@import 'tailwindcss';
 
-@import "tw-animate-css";
+@import 'tw-animate-css';
 
 @custom-variant dark (&:is(.dark *));
 
@@ -116,12 +116,12 @@
     @apply border-border outline-ring/50;
   }
   body {
-    @apply bg-background text-foreground min-h-screen relative overflow-x-hidden flex flex-col;
-    font-family: "Outfit", sans-serif;
+    @apply bg-background text-foreground relative flex min-h-screen flex-col overflow-x-hidden;
+    font-family: 'Outfit', sans-serif;
   }
   body::before {
-    content: "";
-    @apply absolute inset-0 -z-10 pointer-events-none;
+    content: '';
+    @apply pointer-events-none absolute inset-0 -z-10;
     background:
       radial-gradient(circle at top left, rgba(79, 70, 229, 0.15), transparent 40%),
       radial-gradient(circle at bottom right, rgba(147, 51, 234, 0.15), transparent 40%),
@@ -129,7 +129,7 @@
   }
 
   .glass-card {
-    @apply bg-slate-900/40 backdrop-blur-2xl border border-white/10 shadow-[0_8px_32px_0_rgba(0,0,0,0.5)];
+    @apply border border-white/10 bg-slate-900/40 shadow-[0_8px_32px_0_rgba(0,0,0,0.5)] backdrop-blur-2xl;
   }
 
   .text-glow {

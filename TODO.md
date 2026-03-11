@@ -35,6 +35,7 @@ Este archivo mantendrá un registro del progreso y el estado actual del desarrol
   - [x] Submit a la rama actual
 
 ## Notas
-*   Se usará **Gemini AI Pro** (mediante el modelo `gemini-1.5-pro` o el mejor disponible).
-*   Se evitarán frameworks extra como React/Vue para mantener el proyecto ligero usando solo las capacidades nativas del DOM y Astro.
-*   El backend usará SSR (Server-Side Rendering) y el adaptador de Cloudflare Pages, donde la API Key estará segura como Variable de Entorno.
+
+- Se usará **Gemini AI Pro** (mediante el modelo `gemini-1.5-pro` o el mejor disponible).
+- Se evitarán frameworks extra como React/Vue para mantener el proyecto ligero usando solo las capacidades nativas del DOM y Astro.
+- El backend usará SSR (Server-Side Rendering) y el adaptador de Cloudflare Pages, donde la API Key estará segura como Variable de Entorno.

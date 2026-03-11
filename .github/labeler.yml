@@ -1,23 +1,23 @@
 # Feature branches
-"✨ feature":
+'✨ feature':
   - head-branch: ['^feat', 'feature/*']
 
 # Bugfixes
-"🐛 bug":
+'🐛 bug':
   - head-branch: ['^fix', 'bugfix/*']
 
 # CI/CD and DevOps
-"⚙️ ci/cd":
+'⚙️ ci/cd':
   - head-branch: ['^ci', 'ci/*', 'devops/*']
 
 # Documentation
-"📚 documentation":
+'📚 documentation':
   - head-branch: ['^docs', 'doc/*']
 
 # Refactors
-"♻️ refactor":
+'♻️ refactor':
   - head-branch: ['^refactor']
 
 # Dependencies
-"📦 dependencies":
+'📦 dependencies':
   - head-branch: ['^dependabot', 'deps/*']

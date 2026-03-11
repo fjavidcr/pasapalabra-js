@@ -15,14 +15,14 @@ To compute something from state, use `$derived` rather than `$effect`:
 
 ```js
 // do this
-let square = $derived(num * num);
+let square = $derived(num * num)
 
 // don't do this
-let square;
+let square
 
 $effect(() => {
-	square = num * num;
-});
+  square = num * num
+})
 ```
 
 > [!NOTE] `$derived` is given an expression, _not_ a function. If you need to use a function (because the expression is complex, for example) use `$derived.by`.
@@ -48,13 +48,13 @@ Treat props as though they will change. For example, values that depend on props
 
 ```js
 // @errors: 2451
-let { type } = $props();
+let { type } = $props()
 
 // do this
-let color = $derived(type === 'danger' ? 'red' : 'green');
+let color = $derived(type === 'danger' ? 'red' : 'green')
 
 // don't do this — `color` will not update if `type` changes
-let color = type === 'danger' ? 'red' : 'green';
+let color = type === 'danger' ? 'red' : 'green'
 ```
 
 ## `$inspect.trace`
@@ -90,7 +90,7 @@ Avoid using `onMount` or `$effect` for this.
 
 ```svelte
 {#snippet greeting(name)}
-	<p>hello {name}!</p>
+  <p>hello {name}!</p>
 {/snippet}
 
 {@render greeting('world')}
@@ -128,9 +128,9 @@ The CSS in a component's `<style>` is scoped to that component. If a parent comp
 <h1>Hello</h1>
 
 <style>
-	h1 {
-		color: var(--color);
-	}
+  h1 {
+    color: var(--color);
+  }
 </style>
 ```
 
@@ -138,15 +138,15 @@ If this impossible (for example, the child component comes from a library) you c
 
 ```svelte
 <div>
-	<Child />
+  <Child />
 </div>
 
 <style>
-	div :global {
-		h1 {
-			color: red;
-		}
-	}
+  div :global {
+    h1 {
+      color: red;
+    }
+  }
 </style>
 ```
 
