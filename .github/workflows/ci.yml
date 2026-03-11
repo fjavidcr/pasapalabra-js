@@ -39,7 +39,7 @@ jobs:
 
       - name: Test Build
         run: npm run build
-        
+
   deploy-production:
     name: Deploy to Production
     needs: build_and_test
