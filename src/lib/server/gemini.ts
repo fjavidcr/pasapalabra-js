@@ -1,4 +1,5 @@
 import { GoogleGenAI, Type } from '@google/genai'
+import { GEMINI_API_KEY } from 'astro:env/server'
 import { DEFAULT_MODEL_ID } from '$lib/config/models'
 import { validateSecureToken } from '$lib/server/security'
 
@@ -9,7 +10,7 @@ export async function generateRoscoWords(formData: FormData) {
   // Validar token antes de gastar recursos de la API
   validateSecureToken(secureToken)
 
-  const apiKey = import.meta.env.GEMINI_API_KEY
+  const apiKey = GEMINI_API_KEY
   if (!apiKey) {
     throw new Error('GEMINI_API_KEY is not configured.')
   }

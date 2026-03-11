@@ -1,3 +1,4 @@
+import { API_SECRET_KEY } from 'astro:env/server'
 import CryptoJS from 'crypto-js'
 
 const TOKEN_EXPIRATION_SECONDS = 300 // 5 minutos
@@ -7,7 +8,7 @@ const TOKEN_EXPIRATION_SECONDS = 300 // 5 minutos
  * @returns Un string con el formato "timestamp.signature"
  */
 export function generateSecureToken(): string {
-  const secret = import.meta.env.API_SECRET_KEY
+  const secret = API_SECRET_KEY
   if (!secret) {
     throw new Error('API_SECRET_KEY is missing in environment variables.')
   }
@@ -28,7 +29,7 @@ export function validateSecureToken(secureToken: string | null | undefined): voi
     throw new Error('Acceso denegado. Token faltante o inválido.')
   }
 
-  const secret = import.meta.env.API_SECRET_KEY
+  const secret = API_SECRET_KEY
   if (!secret) {
     throw new Error('Error del servidor. Configuración incompleta.')
   }
