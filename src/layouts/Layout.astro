@@ -1,29 +1,38 @@
 ---
 export interface Props {
-	title?: string;
+  title?: string
 }
 
-const { title = "Pasapalabra IA" } = Astro.props;
+const { title = 'Pasapalabra IA' } = Astro.props
 ---
 
 <!doctype html>
 <html lang="es" class="dark">
-	<head>
-		<meta charset="UTF-8" />
-		<meta name="viewport" content="width=device-width" />
-		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-		<link rel="preconnect" href="https://fonts.googleapis.com">
-		<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-		<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
-		<meta name="generator" content={Astro.generator} />
-		<title>{title}</title>
-		<meta name="description" content="Generador de Rosco de Pasapalabra impulsado por Inteligencia Artificial. Juega a Pasapalabra de forma infinita con Gemini." />
-		<meta property="og:title" content={title} />
-		<meta property="og:description" content="Generador de Rosco de Pasapalabra impulsado por Inteligencia Artificial. Juega a Pasapalabra de forma infinita con Gemini." />
-		<meta property="og:type" content="website" />
-		<link rel="canonical" href={new URL(Astro.url.pathname, Astro.site || Astro.url)} />
-	</head>
-	<body>
-		<slot />
-	</body>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&display=swap"
+      rel="stylesheet"
+    />
+    <meta name="generator" content={Astro.generator} />
+    <title>{title}</title>
+    <meta
+      name="description"
+      content="Generador de Rosco de Pasapalabra impulsado por Inteligencia Artificial. Juega a Pasapalabra de forma infinita con Gemini."
+    />
+    <meta property="og:title" content={title} />
+    <meta
+      property="og:description"
+      content="Generador de Rosco de Pasapalabra impulsado por Inteligencia Artificial. Juega a Pasapalabra de forma infinita con Gemini."
+    />
+    <meta property="og:type" content="website" />
+    <link rel="canonical" href={new URL(Astro.url.pathname, Astro.site || Astro.url)} />
+  </head>
+  <body>
+    <slot />
+  </body>
 </html>

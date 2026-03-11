@@ -1,30 +1,37 @@
 <script lang="ts">
-  import { getGameState } from "$lib/state/game.svelte";
-  import { cn } from "$lib/utils";
-  const game = getGameState();
+  import { getGameState } from '$lib/state/game.svelte'
+  import { cn } from '$lib/utils'
+
+  const game = getGameState()
 
   function getPosition(index: number, total: number, radius: number) {
-    const angle = (index / total) * 2 * Math.PI - (Math.PI / 2);
-    const x = Math.cos(angle) * radius;
-    const y = Math.sin(angle) * radius;
-    return { x, y };
+    const angle = (index / total) * 2 * Math.PI - Math.PI / 2
+    const x = Math.cos(angle) * radius
+    const y = Math.sin(angle) * radius
+    return { x, y }
   }
 </script>
 
-<div 
-  class="relative rounded-full flex items-center justify-center my-4 md:my-8" 
-  style="width: {game.roscoSize}px; height: {game.roscoSize}px;"
->
+<div
+  class="relative my-4 flex items-center justify-center rounded-full md:my-8"
+  style="width: {game.roscoSize}px; height: {game.roscoSize}px;">
   {#each game.words as item, i (i)}
     {@const pos = getPosition(i, game.words.length, game.roscoSize / 2)}
-    {@const isActive = i === game.currentIndex && item.status !== 'correct' && item.status !== 'incorrect'}
+    {@const isActive =
+      i === game.currentIndex && item.status !== 'correct' && item.status !== 'incorrect'}
     <div
       class={cn(
-        "absolute flex flex-col items-center justify-center rounded-full font-extrabold text-xl text-white border-[3px] backdrop-blur-sm rosco-item",
-        item.status === 'unanswered' || item.status === 'passed' ? "bg-slate-800/80 border-indigo-400" : "",
-        isActive ? "border-white bg-indigo-500 z-20 rosco-active" : "",
-        item.status === 'correct' ? "bg-green-500 border-green-400 shadow-[0_0_20px_rgba(74,222,128,0.7)]" : "",
-        item.status === 'incorrect' ? "bg-red-500 border-red-400 shadow-[0_0_20px_rgba(248,113,113,0.7)]" : ""
+        'rosco-item absolute flex flex-col items-center justify-center rounded-full border-[3px] text-xl font-extrabold text-white backdrop-blur-sm',
+        item.status === 'unanswered' || item.status === 'passed'
+          ? 'border-indigo-400 bg-slate-800/80'
+          : '',
+        isActive ? 'rosco-active z-20 border-white bg-indigo-500' : '',
+        item.status === 'correct'
+          ? 'border-green-400 bg-green-500 shadow-[0_0_20px_rgba(74,222,128,0.7)]'
+          : '',
+        item.status === 'incorrect'
+          ? 'border-red-400 bg-red-500 shadow-[0_0_20px_rgba(248,113,113,0.7)]'
+          : ''
       )}
       style="
         width: 44px; height: 44px;
@@ -32,8 +39,7 @@
         translate: calc(-50% + {pos.x}px) calc(-50% + {pos.y}px);
         scale: {isActive ? '1.4' : '1'};
         z-index: {isActive ? 10 : 1};
-      "
-    >
+      ">
       {item.letter.toUpperCase()}
     </div>
   {/each}
@@ -42,7 +48,11 @@
 <style>
   .rosco-item {
     /* Use explicit transitions rather than transition-all for better performance */
-    transition: background-color 0.4s ease, border-color 0.4s ease, scale 0.4s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.4s ease;
+    transition:
+      background-color 0.4s ease,
+      border-color 0.4s ease,
+      scale 0.4s cubic-bezier(0.34, 1.56, 0.64, 1),
+      box-shadow 0.4s ease;
     will-change: transform, scale, box-shadow;
   }
 
@@ -53,7 +63,8 @@
   }
 
   @keyframes rosco-breathe {
-    0%, 100% {
+    0%,
+    100% {
       scale: 1.4;
       box-shadow: 0 0 25px rgba(99, 102, 241, 0.9);
     }

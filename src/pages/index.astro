@@ -1,25 +1,39 @@
 ---
-import Layout from '$layouts/Layout.astro';
-import SetupScreen from '$components/game/SetupScreen.svelte';
-import GameActive from '$components/game/GameActive.svelte';
-import { handleGameSSR } from '$lib/server/gameHandler';
-import '$styles/global.css';
+import GameActive from '$components/game/GameActive.svelte'
+import SetupScreen from '$components/game/SetupScreen.svelte'
+import Layout from '$layouts/Layout.astro'
+import { handleGameSSR } from '$lib/server/gameHandler'
+import '$styles/global.css'
 
-const { wordsPromise, setupErrorMsg, redirectRoute, secureToken } = await handleGameSSR(Astro.request);
+const { wordsPromise, setupErrorMsg, redirectRoute, secureToken, modelId } = await handleGameSSR(
+  Astro.request
+)
 
 if (redirectRoute) {
-	return Astro.redirect(redirectRoute);
+  return Astro.redirect(redirectRoute)
 }
 ---
 
 <Layout>
-	<main class="flex min-h-screen w-full flex-col items-center justify-center overflow-x-hidden p-4 sm:p-8">
-		{wordsPromise ? (
-			wordsPromise
-				.then(words => <GameActive client:load secureToken={secureToken} initialWords={words} />)
-				.catch(err => <SetupScreen client:load secureToken={secureToken} errorMsg={err.message} />)
-		) : (
-			<SetupScreen client:load secureToken={secureToken} errorMsg={setupErrorMsg} />
-		)}
-	</main>
+  <main
+    class="flex min-h-screen w-full flex-col items-center justify-center overflow-x-hidden p-4 sm:p-8">
+    {
+      wordsPromise ? (
+        wordsPromise
+          .then((words) => (
+            <GameActive
+              client:load
+              secureToken={secureToken}
+              initialWords={words}
+              modelId={modelId}
+            />
+          ))
+          .catch((err) => (
+            <SetupScreen client:load secureToken={secureToken} errorMsg={err.message} />
+          ))
+      ) : (
+        <SetupScreen client:load secureToken={secureToken} errorMsg={setupErrorMsg} />
+      )
+    }
+  </main>
 </Layout>

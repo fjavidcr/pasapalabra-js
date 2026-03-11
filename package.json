@@ -1,13 +1,36 @@
 {
   "name": "pasapalabra-js",
   "type": "module",
-  "version": "0.0.1",
+  "version": "0.1.0",
+  "description": "El clásico juego del rosco en JavaScript",
+  "author": "Javi del Castillo",
+  "keywords": [
+    "pasapalabra",
+    "rosco",
+    "juego",
+    "javascript",
+    "astro",
+    "svelte"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/fjavidcr/pasapalabra-js.git"
+  },
+  "bugs": {
+    "url": "https://github.com/fjavidcr/pasapalabra-js/issues"
+  },
+  "license": "GPL-3.0",
   "scripts": {
     "dev": "astro dev",
     "build": "astro build",
     "preview": "npm run build && wrangler dev",
     "deploy": "npm run build && wrangler deploy",
-    "astro": "astro"
+    "astro": "astro",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "lint": "eslint .",
+    "check": "astro check",
+    "postinstall": "lefthook install"
   },
   "dependencies": {
     "@astrojs/check": "^0.9.6",
@@ -22,12 +45,23 @@
     "typescript": "^5.9.3"
   },
   "devDependencies": {
+    "@eslint/js": "^10.0.1",
+    "@evilmartians/lefthook": "^2.1.3",
     "@lucide/svelte": "^0.577.0",
     "@types/crypto-js": "^4.2.2",
     "clsx": "^2.1.1",
+    "eslint": "^10.0.3",
+    "eslint-plugin-astro": "^1.6.0",
+    "eslint-plugin-svelte": "^3.15.2",
+    "prettier": "^3.8.1",
+    "prettier-plugin-astro": "^0.14.1",
+    "prettier-plugin-svelte": "^3.5.1",
+    "prettier-plugin-tailwindcss": "^0.7.2",
+    "svelte-eslint-parser": "^1.6.0",
     "tailwind-merge": "^3.5.0",
     "tailwind-variants": "^3.2.2",
     "tw-animate-css": "^1.4.0",
+    "typescript-eslint": "^8.57.0",
     "wrangler": "^4.71.0"
   }
 }
