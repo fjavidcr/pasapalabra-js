@@ -7,12 +7,19 @@ export async function generateRoscoWords(formData: FormData) {
   const secureToken = formData.get('secureToken') as string
   const modelId = (formData.get('modelId') as string) || DEFAULT_MODEL_ID
   const difficulty = (formData.get('difficulty') as string) || 'medium'
+  const category = (formData.get('category') as string) || 'general'
 
   // Validar token antes de gastar recursos de la API
   validateSecureToken(secureToken)
 
+  // Sanitización básica de la categoría para evitar inyecciones o contenido ofensivo
+  const sanitizedCategory =
+    category === 'general'
+      ? 'cultura general'
+      : category.trim().substring(0, 50).replace(/[<>]/g, '')
+
   console.log(
-    `--- GEMINI AI: Generating new rosco with model ${modelId} and difficulty ${difficulty} ---`
+    `--- GEMINI AI: Generating rosco | Model: ${modelId} | Difficulty: ${difficulty} | Category: ${sanitizedCategory} ---`
   )
 
   const apiKey = GEMINI_API_KEY
@@ -23,27 +30,30 @@ export async function generateRoscoWords(formData: FormData) {
   const ai = new GoogleGenAI({ apiKey: apiKey })
 
   const difficultyInstructions = {
-    easy: 'Usa palabras muy comunes, nombres de objetos cotidianos, animales o verbos simples. Las definiciones deben ser directas y fáciles de entender para cualquier persona.',
+    easy: 'Usa palabras muy comunes, nombres de objetos cotidianos, animales o verbos simples. Las definiciones deben ser directas y fáciles de entender.',
     medium:
-      'Usa un nivel de vocabulario estándar de cultura general. Mezcla palabras comunes con algunas más específicas pero conocidas.',
-    hard: 'Usa palabras poco frecuentes, técnicas, literarias o cultas. Las definiciones pueden ser más complejas, precisas y desafiantes.'
+      'Usa un nivel de vocabulario estándar de cultura general. Mezcla palabras comunes con algunas más específicas.',
+    hard: 'Usa palabras poco frecuentes, técnicas, literarias o cultas. Las definiciones pueden ser desafiantes y precisas.'
   }
 
   const systemInstruction = `
 Eres un creador experto de roscos para el juego Pasapalabra en español.
 Genera un rosco completo de 27 letras (A-Z, incluyendo Ñ).
-NIVEL DE DIFICULTAD: ${difficulty.toUpperCase()}.
-Instrucciones de nivel: ${difficultyInstructions[difficulty as keyof typeof difficultyInstructions] || difficultyInstructions.medium}
+
+CONTEXTO DEL ROSCO:
+- NIVEL DE DIFICULTAD: ${difficulty.toUpperCase()}.
+- TEMÁTICA/CATEGORÍA: ${sanitizedCategory.toUpperCase()}.
+- Instrucciones de nivel: ${difficultyInstructions[difficulty as keyof typeof difficultyInstructions] || difficultyInstructions.medium}
 
 REGLAS CRÍTICAS:
-1. Dinamismo: Mezcla palabras que "EMPIEZA POR" y palabras que "CONTIENE LA" de forma variada en todo el rosco.
-2. Letras raras: Para letras como X, Y, Z, Q, J, siempre intenta combinaciones creativas (ej: "CONTIENE LA X").
-3. NO REPETICIÓN: Bajo ninguna circunstancia repitas la misma palabra en el mismo rosco.
-4. VARIEDAD HISTÓRICA: Evita las palabras más obvias o "clichés" de Pasapalabra (como "Abdomen" para la A o "Zulo" para la Z). Busca palabras frescas y originales que no se hayan usado recientemente en tus respuestas anteriores.
-5. Formato: Genera exactamente 27 objetos, uno para cada letra (A, B, C, D, E, F, G, H, I, J, K, L, M, N, Ñ, O, P, Q, R, S, T, U, V, W, X, Y, Z). Si K o W son muy difíciles, usa "CONTIENE LA".
-6. DEFINICIONES: Deben ser rigurosas pero adecuadas al nivel de dificultad seleccionado.
+1. Tematización: TODAS las palabras (o la gran mayoría) deben estar relacionadas directamente con la categoría "${sanitizedCategory}".
+2. Dinamismo: Mezcla palabras que "EMPIEZA POR" y palabras que "CONTIENE LA".
+3. NO REPETICIÓN: No repitas la misma palabra en el mismo rosco.
+4. VARIEDAD: Busca palabras originales y evita los clichés de Pasapalabra.
+5. Formato: 27 objetos (A-Z, Ñ). Si K o W son imposibles para la temática, usa "CONTIENE LA" con palabras de cultura general que encajen.
+6. DEFINICIONES: Rigurosas y adecuadas al nivel ${difficulty}.
 `
-  const prompt = `Genera un rosco de Pasapalabra de nivel ${difficulty} con palabras variadas y originales.`
+  const prompt = `Genera un rosco de Pasapalabra sobre "${sanitizedCategory}" con dificultad ${difficulty}.`
 
   try {
     const result = await ai.models.generateContent({

@@ -48,6 +48,7 @@ export interface SavedGame {
   currentIndex: number
   modelId?: string
   difficulty?: string
+  category?: string
 }
 
 export async function getSavedGame(

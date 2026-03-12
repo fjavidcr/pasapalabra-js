@@ -15,6 +15,7 @@ export async function handleGameSSR(
   secureToken: string
   preferredModelId?: string
   preferredDifficulty?: string
+  preferredCategory?: string
   stats: GameStats
   savedGame?: SavedGame
 }> {
@@ -29,22 +30,27 @@ export async function handleGameSSR(
   }
 
   // Leer datos de sesión en paralelo
-  const [preferredModelId, preferredDifficulty, stats, savedGame] = await Promise.all([
-    session
-      ? (session.get('preferredModel') as Promise<string | undefined>)
-      : Promise.resolve(undefined),
-    session
-      ? (session.get('preferredDifficulty') as Promise<string | undefined>)
-      : Promise.resolve(undefined),
-    getStats(session),
-    getSavedGame(session)
-  ])
+  const [preferredModelId, preferredDifficulty, preferredCategory, stats, savedGame] =
+    await Promise.all([
+      session
+        ? (session.get('preferredModel') as Promise<string | undefined>)
+        : Promise.resolve(undefined),
+      session
+        ? (session.get('preferredDifficulty') as Promise<string | undefined>)
+        : Promise.resolve(undefined),
+      session
+        ? (session.get('preferredCategory') as Promise<string | undefined>)
+        : Promise.resolve(undefined),
+      getStats(session),
+      getSavedGame(session)
+    ])
 
   if (request.method === 'POST') {
     const formData = await request.formData()
     const submittedToken = formData.get('secureToken') as string
     const submittedModelId = formData.get('modelId') as string
     const submittedDifficulty = formData.get('difficulty') as string
+    const submittedCategory = formData.get('category') as string
 
     try {
       validateSecureToken(submittedToken)
@@ -60,6 +66,9 @@ export async function handleGameSSR(
         if (submittedDifficulty) {
           session.set('preferredDifficulty', submittedDifficulty)
         }
+        if (submittedCategory) {
+          session.set('preferredCategory', submittedCategory)
+        }
       }
 
       // 1. Generar el rosco
@@ -72,7 +81,8 @@ export async function handleGameSSR(
           words: words.map((w: RoscoGenerateItem) => ({ ...w, status: 'unanswered' })),
           currentIndex: 0,
           modelId: submittedModelId || undefined,
-          difficulty: submittedDifficulty || 'medium'
+          difficulty: submittedDifficulty || 'medium',
+          category: submittedCategory || 'general'
         })
       }
 
@@ -103,6 +113,7 @@ export async function handleGameSSR(
     secureToken,
     preferredModelId,
     preferredDifficulty,
+    preferredCategory,
     stats,
     savedGame
   }

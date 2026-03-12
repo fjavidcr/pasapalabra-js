@@ -13,6 +13,7 @@
     secureToken,
     modelId,
     difficulty,
+    category,
     savedCurrentIndex,
     stats
   }: {
@@ -20,6 +21,7 @@
     secureToken: string
     modelId?: string
     difficulty?: string
+    category?: string
     savedCurrentIndex?: number
     stats?: GameStats
   } = $props()
@@ -27,13 +29,23 @@
   const game = initGameState(
     untrack(() => initialWords),
     untrack(() => modelId),
-    untrack(() => savedCurrentIndex)
+    untrack(() => savedCurrentIndex),
+    untrack(() => category),
+    untrack(() => difficulty)
   )
 
   const difficultyLabels: Record<string, string> = {
     easy: 'Fácil',
     medium: 'Medio',
     hard: 'Difícil'
+  }
+
+  const categoryLabels: Record<string, string> = {
+    general: 'General',
+    ciencia: 'Ciencia',
+    deporte: 'Deporte',
+    historia: 'Historia',
+    cine: 'Cine'
   }
 
   const difficultyColors: Record<string, string> = {
@@ -45,6 +57,13 @@
   let modelLabel = $derived(AVAILABLE_MODELS.find((m) => m.id === game.modelId)?.label)
   let difficultyLabel = $derived(difficulty ? difficultyLabels[difficulty] : 'Medio')
   let difficultyColor = $derived(difficulty ? difficultyColors[difficulty] : 'text-amber-400/90')
+
+  let displayCategory = $derived.by(() => {
+    if (!category || category === 'general') return 'General'
+    if (categoryLabels[category]) return categoryLabels[category]
+    // Capitalizar categoría personalizada
+    return category.charAt(0).toUpperCase() + category.slice(1)
+  })
 
   $effect(() => {
     game.setSecureToken(secureToken)
@@ -67,6 +86,11 @@
         <span class="flex items-center gap-1.5">
           <span class="text-slate-500">Nivel:</span>
           <span class="font-semibold {difficultyColor}">{difficultyLabel}</span>
+        </span>
+        <span class="h-3 w-px bg-slate-700/50"></span>
+        <span class="flex items-center gap-1.5">
+          <span class="text-slate-500">Tema:</span>
+          <span class="font-semibold text-sky-400/90">{displayCategory}</span>
         </span>
       </div>
     {/if}
