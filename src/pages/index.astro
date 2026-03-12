@@ -5,9 +5,23 @@ import Layout from '$layouts/Layout.astro'
 import { handleGameSSR } from '$lib/server/gameHandler'
 import '$styles/global.css'
 
-const { wordsPromise, setupErrorMsg, redirectRoute, secureToken, modelId } = await handleGameSSR(
-  Astro.request
+const {
+  wordsPromise,
+  setupErrorMsg,
+  redirectRoute,
+  secureToken,
+  modelId,
+  preferredModelId,
+  stats,
+  savedGame
+} = await handleGameSSR(Astro.request, Astro.session)
+
+console.log(
+  `--- INDEX RENDER: Method=${Astro.request.method}, hasSavedGame=${!!savedGame}, hasWordsPromise=${!!wordsPromise} ---`
 )
+if (savedGame) {
+  console.log(`--- INDEX RENDER: Restoring game with ${savedGame.currentIndex} index ---`)
+}
 
 if (redirectRoute) {
   return Astro.redirect(redirectRoute)
@@ -26,13 +40,35 @@ if (redirectRoute) {
               secureToken={secureToken}
               initialWords={words}
               modelId={modelId}
+              stats={stats}
             />
           ))
           .catch((err) => (
-            <SetupScreen client:load secureToken={secureToken} errorMsg={err.message} />
+            <SetupScreen
+              client:load
+              secureToken={secureToken}
+              errorMsg={err.message}
+              preferredModelId={preferredModelId}
+              stats={stats}
+            />
           ))
+      ) : savedGame ? (
+        <GameActive
+          client:load
+          secureToken={secureToken}
+          initialWords={savedGame.words}
+          modelId={savedGame.modelId}
+          savedCurrentIndex={savedGame.currentIndex}
+          stats={stats}
+        />
       ) : (
-        <SetupScreen client:load secureToken={secureToken} errorMsg={setupErrorMsg} />
+        <SetupScreen
+          client:load
+          secureToken={secureToken}
+          errorMsg={setupErrorMsg}
+          preferredModelId={preferredModelId}
+          stats={stats}
+        />
       )
     }
   </main>

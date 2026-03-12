@@ -10,6 +10,7 @@ export default defineConfig({
   output: 'server',
   adapter: cloudflare(),
   integrations: [svelte()],
+  session: {},
 
   env: {
     schema: {

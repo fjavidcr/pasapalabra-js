@@ -2,7 +2,8 @@
   import { untrack } from 'svelte'
   import { AVAILABLE_MODELS } from '$lib/config/models'
   import { initGameState } from '$lib/state/game.svelte'
-  import type { RoscoGenerateItem } from '$lib/types'
+  import type { GameStats } from '$lib/server/sessionService'
+  import type { RoscoGenerateItem, WordItem } from '$lib/types'
   import GameControls from './GameControls.svelte'
   import ResultsScreen from './ResultsScreen.svelte'
   import RoscoBoard from './RoscoBoard.svelte'
@@ -10,16 +11,21 @@
   let {
     initialWords,
     secureToken,
-    modelId
+    modelId,
+    savedCurrentIndex,
+    stats
   }: {
-    initialWords: RoscoGenerateItem[]
+    initialWords: RoscoGenerateItem[] | WordItem[]
     secureToken: string
     modelId?: string
+    savedCurrentIndex?: number
+    stats?: GameStats
   } = $props()
 
   const game = initGameState(
     untrack(() => initialWords),
-    untrack(() => modelId)
+    untrack(() => modelId),
+    untrack(() => savedCurrentIndex)
   )
 
   let modelLabel = $derived(AVAILABLE_MODELS.find((m) => m.id === game.modelId)?.label)
@@ -41,9 +47,15 @@
         <span class="font-semibold text-indigo-300">{modelLabel}</span>
       </div>
     {/if}
+    {#if game.errorMsg}
+      <div
+        class="animate-in slide-in-from-top-2 w-full rounded-xl border border-red-500/20 bg-red-500/10 p-4 text-center text-sm font-medium text-red-400">
+        {game.errorMsg}
+      </div>
+    {/if}
     <RoscoBoard />
     <GameControls />
   </div>
 {:else if game.status === 'results'}
-  <ResultsScreen />
+  <ResultsScreen {stats} />
 {/if}
