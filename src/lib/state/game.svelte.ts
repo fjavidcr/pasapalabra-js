@@ -135,6 +135,9 @@ export class GameState {
     this.status = 'setup'
     this.saveToSession(null)
     this.words = []
+    if (typeof window !== 'undefined') {
+      window.location.href = '/'
+    }
   }
 
   saveToSession(game: { words: WordItem[]; currentIndex: number; modelId?: string } | null): void {
