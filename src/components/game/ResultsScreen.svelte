@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { onMount } from 'svelte'
   import { Badge } from '$lib/components/ui/badge'
   import { Button } from '$lib/components/ui/button'
   import {
@@ -10,8 +11,49 @@
     CardTitle
   } from '$lib/components/ui/card'
   import { getGameState } from '$lib/state/game.svelte'
+  import type { GameStats } from '$lib/server/sessionService'
 
+  let { stats }: { stats?: GameStats } = $props()
   const game = getGameState()
+
+  // Guardar stats al montar la pantalla de resultados
+  onMount(() => {
+    fetch('/api/save-stats', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'x-pasapalabra-client': 'true',
+        'x-secure-token': game.secureToken
+      },
+      body: JSON.stringify({ words: game.words })
+    }).catch(() => {})
+  })
+
+  // Top 3 letras más falladas (de historial previo)
+  let hardestLetters = $derived(
+    stats
+      ? Object.entries(stats.failedLetters)
+          .sort(([, a], [, b]) => b - a)
+          .slice(0, 3)
+      : []
+  )
+  // Mapas para visualización
+  const difficultyLabels: Record<string, string> = {
+    easy: 'Fácil',
+    medium: 'Medio',
+    hard: 'Difícil'
+  }
+
+  const difficultyColors: Record<string, string> = {
+    easy: 'text-emerald-400',
+    medium: 'text-amber-400',
+    hard: 'text-rose-400'
+  }
+
+  let difficultyLabel = $derived(game.difficulty ? difficultyLabels[game.difficulty] : 'Medio')
+  let difficultyColor = $derived(
+    game.difficulty ? difficultyColors[game.difficulty] : 'text-amber-400'
+  )
 </script>
 
 <Card
@@ -21,7 +63,23 @@
       <span class="bg-linear-to-br from-amber-500 to-orange-400 bg-clip-text text-transparent"
         >¡Juego Terminado!</span>
     </CardTitle>
-    <CardDescription class="mt-3 text-xl font-medium">Resumen de tu puntuación</CardDescription>
+    <CardDescription class="mt-3 text-xl font-medium">
+      <div class="flex flex-col items-center gap-1">
+        <span>Resumen de tu puntuación</span>
+        <div class="flex items-center gap-2 text-sm font-medium">
+          {#if game.category && game.category !== 'general'}
+            <span class="text-slate-500">
+              Tema: <span class="text-sky-400"
+                >{game.category.charAt(0).toUpperCase() + game.category.slice(1)}</span>
+            </span>
+            <span class="h-3 w-px bg-slate-700/50"></span>
+          {/if}
+          <span class="text-slate-500">
+            Nivel: <span class={difficultyColor}>{difficultyLabel}</span>
+          </span>
+        </div>
+      </div>
+    </CardDescription>
   </CardHeader>
   <CardContent
     class="border-border/50 my-4 flex flex-col gap-8 border-y bg-slate-50/30 py-10 dark:bg-slate-900/30">
@@ -46,13 +104,37 @@
       </div>
     </div>
 
+    {#if stats && stats.played > 0}
+      <div
+        class="animate-in fade-in slide-in-from-bottom-4 fill-mode-both mx-auto w-full max-w-xs rounded-xl border border-slate-700/40 bg-slate-900/30 px-6 py-4 text-sm delay-[450ms] duration-500">
+        <p class="mb-3 text-xs font-bold tracking-wider text-slate-400 uppercase">Tu historial</p>
+        <div class="flex justify-around">
+          <div class="flex flex-col items-center gap-1">
+            <span class="text-2xl font-extrabold text-slate-100">{stats.played}</span>
+            <span class="text-xs text-slate-500">Partidas</span>
+          </div>
+          <div class="flex flex-col items-center gap-1">
+            <span class="text-2xl font-extrabold text-indigo-400">{stats.won}</span>
+            <span class="text-xs text-slate-500">Perfectas</span>
+          </div>
+          {#if hardestLetters.length > 0}
+            <div class="flex flex-col items-center gap-1">
+              <span class="text-2xl font-extrabold text-amber-400"
+                >{hardestLetters.map(([l]) => l).join(', ')}</span>
+              <span class="text-xs text-slate-500">Más falladas</span>
+            </div>
+          {/if}
+        </div>
+      </div>
+    {/if}
+
     {#if game.words.filter((w) => w.status === 'incorrect').length > 0}
       <div
         class="animate-in fade-in slide-in-from-bottom-4 fill-mode-both mx-auto mt-4 w-full max-w-lg text-left delay-[600ms] duration-500">
         <h3 class="mb-3 px-2 text-lg font-bold text-slate-300">Has fallado:</h3>
         <ul
           class="scrollbar-thin scrollbar-thumb-slate-700 scrollbar-track-transparent flex max-h-[40vh] w-full flex-col gap-3 overflow-y-auto pr-2">
-          {#each game.words.filter((w) => w.status === 'incorrect') as item (item.word)}
+          {#each game.words.filter((w) => w.status === 'incorrect') as item (item.letter)}
             <li
               class="flex flex-col gap-1 rounded-xl border border-slate-700/50 bg-slate-900/40 p-4 shadow-sm backdrop-blur-md">
               <div class="flex items-center gap-3">

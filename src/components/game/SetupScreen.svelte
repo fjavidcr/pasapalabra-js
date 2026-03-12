@@ -10,33 +10,59 @@
   } from '$lib/components/ui/card'
   import { AVAILABLE_MODELS, DEFAULT_MODEL_ID, type GeminiModelId } from '$lib/config/models'
   import { initGameState } from '$lib/state/game.svelte'
+  import type { GameStats } from '$lib/server/sessionService'
 
-  let { secureToken, errorMsg }: { secureToken: string; errorMsg?: string } = $props()
+  let {
+    secureToken,
+    errorMsg,
+    preferredModelId,
+    preferredDifficulty,
+    preferredCategory,
+    stats
+  }: {
+    secureToken: string
+    errorMsg?: string
+    preferredModelId?: string
+    preferredDifficulty?: string
+    preferredCategory?: string
+    stats?: GameStats
+  } = $props()
   const game = initGameState()
 
   let selectedModel = $state<GeminiModelId>(DEFAULT_MODEL_ID)
+  let selectedDifficulty = $state<string>('medium')
+  let selectedCategory = $state<string>('general')
+  let customCategory = $state<string>('')
   let exhaustedModels = $state<string[]>([])
-  let modelsLoaded = $state(false)
+
+  const CATEGORIES = [
+    { id: 'general', label: 'General' },
+    { id: 'ciencia', label: 'Ciencia' },
+    { id: 'deporte', label: 'Deporte' },
+    { id: 'historia', label: 'Historia' },
+    { id: 'cine', label: 'Cine' },
+    { id: 'custom', label: 'Otro' }
+  ]
 
   $effect(() => {
-    // Solo cargar del localStorage si no lo hemos hecho aún en esta sesión
-    if (!modelsLoaded && typeof localStorage !== 'undefined') {
-      const stored = localStorage.getItem('pasapalabra_exhausted_models')
-      if (stored) {
-        try {
-          exhaustedModels = JSON.parse(stored)
-        } catch {
-          // Ignore parse errors
-        }
+    // Restaurar preferencias desde sesión SSR
+    if (preferredModelId && AVAILABLE_MODELS.some((m) => m.id === preferredModelId)) {
+      if (!exhaustedModels.includes(preferredModelId)) {
+        selectedModel = preferredModelId as GeminiModelId
       }
-      // Restaurar selección anterior si no está agotado
-      const storedModel = localStorage.getItem('pasapalabra_selected_model') as GeminiModelId
-      if (storedModel && AVAILABLE_MODELS.some((m) => m.id === storedModel)) {
-        if (!exhaustedModels.includes(storedModel)) {
-          selectedModel = storedModel
-        }
+    }
+
+    if (preferredDifficulty) {
+      selectedDifficulty = preferredDifficulty
+    }
+
+    if (preferredCategory) {
+      if (CATEGORIES.some((c) => c.id === preferredCategory)) {
+        selectedCategory = preferredCategory
+      } else {
+        selectedCategory = 'custom'
+        customCategory = preferredCategory
       }
-      modelsLoaded = true
     }
 
     game.setSecureToken(secureToken)
@@ -49,11 +75,7 @@
         game.errorMsg = quotaMatch[2]
 
         if (!exhaustedModels.includes(failedModelId)) {
-          const newExhausted = [...exhaustedModels, failedModelId]
-          exhaustedModels = newExhausted
-          if (typeof localStorage !== 'undefined') {
-            localStorage.setItem('pasapalabra_exhausted_models', JSON.stringify(newExhausted))
-          }
+          exhaustedModels = [...exhaustedModels, failedModelId]
         }
 
         // Auto-select another available model if the current one is exhausted
@@ -108,11 +130,6 @@
         id="model-select"
         class="h-14 w-full cursor-pointer rounded-xl border border-slate-700 bg-slate-900/80 px-4 text-slate-100 shadow-inner transition-all focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500 focus:outline-none disabled:cursor-not-allowed disabled:opacity-50"
         bind:value={selectedModel}
-        onchange={() => {
-          if (typeof localStorage !== 'undefined') {
-            localStorage.setItem('pasapalabra_selected_model', selectedModel)
-          }
-        }}
         disabled={game.loading}>
         {#each AVAILABLE_MODELS as model (model.id)}
           <option value={model.id} disabled={exhaustedModels.includes(model.id)}>
@@ -122,6 +139,86 @@
         {/each}
       </select>
     </div>
+
+    <div class="group relative mx-auto mb-8 w-full text-left">
+      <label for="difficulty-select" class="mb-2 block pl-1 text-sm font-bold text-slate-200">
+        Nivel de Dificultad
+      </label>
+      <div class="grid grid-cols-3 gap-2">
+        {#each [{ id: 'easy', label: 'Fácil' }, { id: 'medium', label: 'Medio' }, { id: 'hard', label: 'Difícil' }] as diff (diff.id)}
+          <button
+            type="button"
+            class="flex h-12 items-center justify-center rounded-xl border border-slate-700 text-sm font-bold transition-all {selectedDifficulty ===
+            diff.id
+              ? 'border-indigo-500 bg-indigo-500/20 text-indigo-400 ring-2 ring-indigo-500'
+              : 'bg-slate-900/50 text-slate-400 hover:border-slate-500 hover:text-slate-200'}"
+            onclick={() => (selectedDifficulty = diff.id)}
+            disabled={game.loading}>
+            {diff.label}
+          </button>
+        {/each}
+      </div>
+    </div>
+
+    <div class="group relative mx-auto mb-8 w-full text-left">
+      <label for="category-select" class="mb-2 block pl-1 text-sm font-bold text-slate-200">
+        Temática del Rosco
+      </label>
+      <div class="grid grid-cols-3 gap-2">
+        {#each CATEGORIES as cat (cat.id)}
+          <button
+            type="button"
+            class="flex h-12 items-center justify-center rounded-xl border border-slate-700 text-sm font-bold transition-all {selectedCategory ===
+            cat.id
+              ? 'border-indigo-500 bg-indigo-500/20 text-indigo-400 ring-2 ring-indigo-500'
+              : 'bg-slate-900/50 text-slate-400 hover:border-slate-500 hover:text-slate-200'}"
+            onclick={() => (selectedCategory = cat.id)}
+            disabled={game.loading}>
+            {cat.label}
+          </button>
+        {/each}
+      </div>
+
+      {#if selectedCategory === 'custom'}
+        <div class="animate-in slide-in-from-top-2 mt-4 duration-300">
+          <input
+            type="text"
+            bind:value={customCategory}
+            placeholder="Ej: Cocina Japonesa, Mitología Egipcia..."
+            maxlength="50"
+            class="h-12 w-full rounded-xl border border-slate-700 bg-slate-900/80 px-4 text-sm text-slate-100 placeholder:text-slate-600 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500 focus:outline-none"
+            disabled={game.loading} />
+        </div>
+      {/if}
+    </div>
+
+    {#if stats && stats.played > 0}
+      <div
+        class="animate-in fade-in fill-mode-both mb-6 flex items-center justify-center gap-6 rounded-xl border border-slate-700/40 bg-slate-900/30 px-6 py-3 text-sm delay-200 duration-500">
+        <div class="flex flex-col items-center gap-0.5">
+          <span class="text-xl font-extrabold text-slate-100">{stats.played}</span>
+          <span class="text-xs text-slate-500">Partidas</span>
+        </div>
+        <div class="h-8 w-px bg-slate-700/50"></div>
+        <div class="flex flex-col items-center gap-0.5">
+          <span class="text-xl font-extrabold text-indigo-400">{stats.won}</span>
+          <span class="text-xs text-slate-500">Perfectas</span>
+        </div>
+        {#if Object.keys(stats.failedLetters).length > 0}
+          <div class="h-8 w-px bg-slate-700/50"></div>
+          <div class="flex flex-col items-center gap-0.5">
+            <span class="text-xl font-extrabold text-amber-400">
+              {Object.entries(stats.failedLetters)
+                .sort(([, a], [, b]) => b - a)
+                .slice(0, 2)
+                .map(([l]) => l)
+                .join(', ')}
+            </span>
+            <span class="text-xs text-slate-500">Más falladas</span>
+          </div>
+        {/if}
+      </div>
+    {/if}
 
     <div class="group relative mx-auto w-full">
       <div
@@ -134,6 +231,11 @@
         }}>
         <input type="hidden" name="secureToken" value={game.secureToken} />
         <input type="hidden" name="modelId" value={selectedModel} />
+        <input type="hidden" name="difficulty" value={selectedDifficulty} />
+        <input
+          type="hidden"
+          name="category"
+          value={selectedCategory === 'custom' ? customCategory : selectedCategory} />
         <Button
           type="submit"
           size="lg"

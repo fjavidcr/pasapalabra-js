@@ -5,9 +5,21 @@ import Layout from '$layouts/Layout.astro'
 import { handleGameSSR } from '$lib/server/gameHandler'
 import '$styles/global.css'
 
-const { wordsPromise, setupErrorMsg, redirectRoute, secureToken, modelId } = await handleGameSSR(
-  Astro.request
-)
+const {
+  setupErrorMsg,
+  redirectRoute,
+  secureToken,
+  preferredModelId,
+  preferredDifficulty,
+  preferredCategory,
+  stats,
+  savedGame
+} = await handleGameSSR(Astro.request, Astro.session)
+
+console.log(`--- INDEX RENDER: Method=${Astro.request.method}, hasSavedGame=${!!savedGame} ---`)
+if (savedGame) {
+  console.log(`--- INDEX RENDER: Restoring game with ${savedGame.currentIndex} index ---`)
+}
 
 if (redirectRoute) {
   return Astro.redirect(redirectRoute)
@@ -18,21 +30,27 @@ if (redirectRoute) {
   <main
     class="flex min-h-screen w-full flex-col items-center justify-center overflow-x-hidden p-4 sm:p-8">
     {
-      wordsPromise ? (
-        wordsPromise
-          .then((words) => (
-            <GameActive
-              client:load
-              secureToken={secureToken}
-              initialWords={words}
-              modelId={modelId}
-            />
-          ))
-          .catch((err) => (
-            <SetupScreen client:load secureToken={secureToken} errorMsg={err.message} />
-          ))
+      savedGame ? (
+        <GameActive
+          client:load
+          secureToken={secureToken}
+          initialWords={savedGame.words}
+          modelId={savedGame.modelId}
+          difficulty={savedGame.difficulty}
+          category={savedGame.category}
+          savedCurrentIndex={savedGame.currentIndex}
+          stats={stats}
+        />
       ) : (
-        <SetupScreen client:load secureToken={secureToken} errorMsg={setupErrorMsg} />
+        <SetupScreen
+          client:load
+          secureToken={secureToken}
+          errorMsg={setupErrorMsg}
+          preferredModelId={preferredModelId}
+          preferredDifficulty={preferredDifficulty}
+          preferredCategory={preferredCategory}
+          stats={stats}
+        />
       )
     }
   </main>

@@ -73,6 +73,22 @@
           Pasapalabra
         </Button>
       </div>
+
+      <div class="mt-4 flex justify-center border-t border-slate-700/30 pt-6">
+        <Button
+          type="button"
+          variant="ghost"
+          class="h-10 text-slate-500 transition-colors hover:bg-red-500/10 hover:text-red-400"
+          onclick={() => {
+            if (
+              confirm('¿Estás seguro de que quieres abandonar esta partida? Perderás tu progreso.')
+            ) {
+              game.restart()
+            }
+          }}>
+          Abandonar Partida
+        </Button>
+      </div>
     </form>
   </CardContent>
 </Card>
