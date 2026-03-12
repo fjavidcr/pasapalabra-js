@@ -36,7 +36,7 @@
   },
   "dependencies": {
     "@astrojs/check": "^0.9.6",
-    "@astrojs/cloudflare": "^12.6.12",
+    "@astrojs/cloudflare": "^12.6.13",
     "@astrojs/svelte": "^7.2.5",
     "@google/genai": "^1.44.0",
     "@tailwindcss/vite": "^4.2.1",
