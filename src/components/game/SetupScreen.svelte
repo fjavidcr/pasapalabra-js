@@ -105,7 +105,7 @@
     <CardTitle class="mb-2 text-5xl font-extrabold tracking-tight sm:text-6xl">
       <span
         class="bg-linear-to-r from-violet-400 via-indigo-400 to-purple-400 bg-clip-text text-transparent drop-shadow-sm"
-        >Pasapalabra AI</span>
+        >Pasapalabra IA</span>
     </CardTitle>
     <CardDescription class="mt-4 text-xl font-medium text-slate-300 sm:text-2xl"
       >El Rosco Inteligente con Gemini</CardDescription>

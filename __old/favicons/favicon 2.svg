@@ -1,0 +1,21 @@
+<svg width="512" height="512" viewBox="0 0 512 512" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="rosco_grad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#0080FF;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#FF6600;stop-opacity:1" />
+    </linearGradient>
+    <filter id="soft_glow" x="-20%" y="-20%" width="140%" height="140%">
+      <feGaussianBlur stdDeviation="8" result="blur" />
+      <feComposite in="SourceGraphic" in2="blur" operator="over" />
+    </filter>
+  </defs>
+  
+  <!-- Outer Ring -->
+  <circle cx="256" cy="256" r="240" stroke="url(#rosco_grad)" stroke-width="32" fill="none" />
+  
+  <!-- Inner Circle with transparency -->
+  <circle cx="256" cy="256" r="210" fill="white" fill-opacity="0.05" />
+  
+  <!-- The Stylized 'P' -->
+  <path d="M180 140H300C355.228 140 400 184.772 400 240C400 295.228 355.228 340 300 340H240V400H180V140ZM240 210V270H300C316.569 270 330 256.569 330 240C330 223.431 316.569 210 300 210H240Z" fill="white" />
+</svg>
