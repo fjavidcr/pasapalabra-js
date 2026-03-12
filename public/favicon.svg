@@ -10,10 +10,6 @@
   <g filter="url(#bubble_glow)">
     <!-- 27 bubbles in a circle -->
     <!-- Colors based on the generated PNG: Blue, Orange, Green -->
-    <script type="text/javascript">
-      // This is just a placeholder to indicate the logic used to generate the paths below
-    </script>
-    
     <!-- Manual paths for the bubbles to ensure high quality and correct positioning -->
     <!-- Bubble 1: Blue -->
     <circle cx="256" cy="46" r="50" fill="#0080FF" fill-opacity="0.8" stroke="white" stroke-opacity="0.2" />
