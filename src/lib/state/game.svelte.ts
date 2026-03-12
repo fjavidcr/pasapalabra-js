@@ -131,16 +131,18 @@ export class GameState {
     this.checkGameOver()
   }
 
-  restart() {
+  async restart() {
     this.status = 'setup'
-    this.saveToSession(null)
+    await this.saveToSession(null)
     this.words = []
     if (typeof window !== 'undefined') {
       window.location.href = '/'
     }
   }
 
-  saveToSession(game: { words: WordItem[]; currentIndex: number; modelId?: string } | null): void {
+  async saveToSession(
+    game: { words: WordItem[]; currentIndex: number; modelId?: string } | null
+  ): Promise<void> {
     // Fire-and-forget: no bloqueamos la UI
     // Solo guardamos si tenemos el secureToken (para evitar errores en SSR puro antes de hidratación)
     if (!this.secureToken) return
@@ -152,7 +154,7 @@ export class GameState {
       if (!hasInteraction) return
     }
 
-    fetch('/api/save-game', {
+    return fetch('/api/save-game', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',

@@ -1,7 +1,7 @@
 import { AVAILABLE_MODELS } from '$lib/config/models'
 import { generateRoscoWords } from '$lib/server/gemini'
 import { generateSecureToken, validateSecureToken } from '$lib/server/security'
-import { getStats, getSavedGame } from '$lib/server/sessionService'
+import { getStats, getSavedGame, saveGame } from '$lib/server/sessionService'
 import type { RoscoGenerateItem } from '$lib/types'
 import type { AstroSession } from 'astro'
 import type { GameStats, SavedGame } from '$lib/server/sessionService'
@@ -10,20 +10,16 @@ export async function handleGameSSR(
   request: Request,
   session: AstroSession | undefined
 ): Promise<{
-  wordsPromise: Promise<RoscoGenerateItem[]> | null
   setupErrorMsg?: string
   redirectRoute?: string
   secureToken: string
-  modelId?: string
   preferredModelId?: string
   stats: GameStats
   savedGame?: SavedGame
 }> {
   console.log(`--- SSR REQUEST: ${request.method} ${new URL(request.url).pathname} ---`)
-  let wordsPromise: Promise<RoscoGenerateItem[]> | null = null
   let setupErrorMsg: string | undefined
   let secureToken = ''
-  let modelId: string | undefined
 
   try {
     secureToken = generateSecureToken()
@@ -44,26 +40,39 @@ export async function handleGameSSR(
     const formData = await request.formData()
     const submittedToken = formData.get('secureToken') as string
     const submittedModelId = formData.get('modelId') as string
-    modelId = submittedModelId || undefined
 
     try {
-      // Validamos sincrónicamente para redirigir rápido si expiró
       validateSecureToken(submittedToken)
 
-      // Validamos el modelo seleccionado
       if (submittedModelId && !AVAILABLE_MODELS.some((m) => m.id === submittedModelId)) {
         throw new Error('Modelo no válido seleccionado.')
       }
 
-      // Guardar modelo preferido en sesión
       if (submittedModelId && session) {
         session.set('preferredModel', submittedModelId)
       }
 
-      wordsPromise = generateRoscoWords(formData)
+      // 1. Generar el rosco
+      const words = await generateRoscoWords(formData)
+
+      // 2. Guardarlo en la sesión para poder recuperarlo tras la redirección
+      // (Es necesario para evitar el aviso de POST del navegador al refrescar)
+      if (session) {
+        await saveGame(session, {
+          words: words.map((w: RoscoGenerateItem) => ({ ...w, status: 'unanswered' })),
+          currentIndex: 0,
+          modelId: submittedModelId || undefined
+        })
+      }
+
+      // 3. Redirigir a GET / para que la URL sea limpia y el renderizado sea SSR
+      return {
+        secureToken,
+        stats,
+        redirectRoute: '/'
+      }
     } catch {
       return {
-        wordsPromise: null,
         secureToken,
         preferredModelId,
         stats,
@@ -78,5 +87,5 @@ export async function handleGameSSR(
     }
   }
 
-  return { wordsPromise, setupErrorMsg, secureToken, modelId, preferredModelId, stats, savedGame }
+  return { setupErrorMsg, secureToken, preferredModelId, stats, savedGame }
 }

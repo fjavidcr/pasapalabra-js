@@ -9,7 +9,8 @@ import { defineConfig, envField } from 'astro/config'
 export default defineConfig({
   output: 'server',
   adapter: cloudflare({
-    imageService: 'compile'
+    imageService: 'compile',
+    sessionKVBindingName: 'SESSION'
   }),
   integrations: [svelte()],
   session: {},
@@ -30,7 +31,10 @@ export default defineConfig({
       rollupOptions: {
         output: {
           manualChunks: (id) => {
-            if (id.includes('svelte/src/internal/client/runtime.js') || id.includes('svelte/src/index-client.js')) {
+            if (
+              id.includes('svelte/src/internal/client/runtime.js') ||
+              id.includes('svelte/src/index-client.js')
+            ) {
               return 'svelte-core'
             }
           }

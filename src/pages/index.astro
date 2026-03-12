@@ -5,20 +5,10 @@ import Layout from '$layouts/Layout.astro'
 import { handleGameSSR } from '$lib/server/gameHandler'
 import '$styles/global.css'
 
-const {
-  wordsPromise,
-  setupErrorMsg,
-  redirectRoute,
-  secureToken,
-  modelId,
-  preferredModelId,
-  stats,
-  savedGame
-} = await handleGameSSR(Astro.request, Astro.session)
+const { setupErrorMsg, redirectRoute, secureToken, preferredModelId, stats, savedGame } =
+  await handleGameSSR(Astro.request, Astro.session)
 
-console.log(
-  `--- INDEX RENDER: Method=${Astro.request.method}, hasSavedGame=${!!savedGame}, hasWordsPromise=${!!wordsPromise} ---`
-)
+console.log(`--- INDEX RENDER: Method=${Astro.request.method}, hasSavedGame=${!!savedGame} ---`)
 if (savedGame) {
   console.log(`--- INDEX RENDER: Restoring game with ${savedGame.currentIndex} index ---`)
 }
@@ -32,27 +22,7 @@ if (redirectRoute) {
   <main
     class="flex min-h-screen w-full flex-col items-center justify-center overflow-x-hidden p-4 sm:p-8">
     {
-      wordsPromise ? (
-        wordsPromise
-          .then((words) => (
-            <GameActive
-              client:load
-              secureToken={secureToken}
-              initialWords={words}
-              modelId={modelId}
-              stats={stats}
-            />
-          ))
-          .catch((err) => (
-            <SetupScreen
-              client:load
-              secureToken={secureToken}
-              errorMsg={err.message}
-              preferredModelId={preferredModelId}
-              stats={stats}
-            />
-          ))
-      ) : savedGame ? (
+      savedGame ? (
         <GameActive
           client:load
           secureToken={secureToken}
