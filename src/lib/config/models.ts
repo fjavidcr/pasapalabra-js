@@ -9,4 +9,4 @@ export const AVAILABLE_MODELS = [
 
 export type GeminiModelId = (typeof AVAILABLE_MODELS)[number]['id']
 
-export const DEFAULT_MODEL_ID: GeminiModelId = 'gemini-3-flash-preview'
+export const DEFAULT_MODEL_ID: GeminiModelId = 'gemini-3.1-flash-lite-preview'

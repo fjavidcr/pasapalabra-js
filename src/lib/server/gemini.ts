@@ -1,4 +1,5 @@
 import { GoogleGenAI, Type } from '@google/genai'
+import { GEMINI_API_KEY } from 'astro:env/server'
 import { DEFAULT_MODEL_ID } from '$lib/config/models'
 import { validateSecureToken } from '$lib/server/security'
 
@@ -9,7 +10,9 @@ export async function generateRoscoWords(formData: FormData) {
   // Validar token antes de gastar recursos de la API
   validateSecureToken(secureToken)
 
-  const apiKey = import.meta.env.GEMINI_API_KEY
+  console.log(`--- GEMINI AI: Generating new rosco with model ${modelId} ---`)
+
+  const apiKey = GEMINI_API_KEY
   if (!apiKey) {
     throw new Error('GEMINI_API_KEY is not configured.')
   }
@@ -24,8 +27,8 @@ No uses solo "empieza por", atrévete a usar "contiene la" en varias letras comu
 Asegúrate de generar exactamente 27 objetos, uno para cada letra del abecedario español (A, B, C, D, E, F, G, H, I, J, L, M, N, Ñ, O, P, Q, R, S, T, U, V, X, Y, Z - puedes omitir K y W si es muy difícil, pero la longitud ideal es 25-27 letras).
 La palabra ("word") debe ser una palabra válida en el diccionario español.
 La definición ("definition") debe ser clara, concisa y referirse inequívocamente a la palabra.
+PROHIBICIÓN: No repitas nunca la misma palabra para letras diferentes. Cada una de las 27 palabras debe ser única.
 `
-
   const prompt = 'Genera un nuevo rosco de nivel intermedio ahora.'
 
   try {

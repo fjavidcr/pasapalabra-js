@@ -10,33 +10,26 @@
   } from '$lib/components/ui/card'
   import { AVAILABLE_MODELS, DEFAULT_MODEL_ID, type GeminiModelId } from '$lib/config/models'
   import { initGameState } from '$lib/state/game.svelte'
+  import type { GameStats } from '$lib/server/sessionService'
 
-  let { secureToken, errorMsg }: { secureToken: string; errorMsg?: string } = $props()
+  let {
+    secureToken,
+    errorMsg,
+    preferredModelId,
+    stats
+  }: { secureToken: string; errorMsg?: string; preferredModelId?: string; stats?: GameStats } =
+    $props()
   const game = initGameState()
 
   let selectedModel = $state<GeminiModelId>(DEFAULT_MODEL_ID)
   let exhaustedModels = $state<string[]>([])
-  let modelsLoaded = $state(false)
 
   $effect(() => {
-    // Solo cargar del localStorage si no lo hemos hecho aún en esta sesión
-    if (!modelsLoaded && typeof localStorage !== 'undefined') {
-      const stored = localStorage.getItem('pasapalabra_exhausted_models')
-      if (stored) {
-        try {
-          exhaustedModels = JSON.parse(stored)
-        } catch {
-          // Ignore parse errors
-        }
+    // Restaurar modelo preferido desde sesión SSR (sin localStorage)
+    if (preferredModelId && AVAILABLE_MODELS.some((m) => m.id === preferredModelId)) {
+      if (!exhaustedModels.includes(preferredModelId)) {
+        selectedModel = preferredModelId as GeminiModelId
       }
-      // Restaurar selección anterior si no está agotado
-      const storedModel = localStorage.getItem('pasapalabra_selected_model') as GeminiModelId
-      if (storedModel && AVAILABLE_MODELS.some((m) => m.id === storedModel)) {
-        if (!exhaustedModels.includes(storedModel)) {
-          selectedModel = storedModel
-        }
-      }
-      modelsLoaded = true
     }
 
     game.setSecureToken(secureToken)
@@ -49,11 +42,7 @@
         game.errorMsg = quotaMatch[2]
 
         if (!exhaustedModels.includes(failedModelId)) {
-          const newExhausted = [...exhaustedModels, failedModelId]
-          exhaustedModels = newExhausted
-          if (typeof localStorage !== 'undefined') {
-            localStorage.setItem('pasapalabra_exhausted_models', JSON.stringify(newExhausted))
-          }
+          exhaustedModels = [...exhaustedModels, failedModelId]
         }
 
         // Auto-select another available model if the current one is exhausted
@@ -108,11 +97,6 @@
         id="model-select"
         class="h-14 w-full cursor-pointer rounded-xl border border-slate-700 bg-slate-900/80 px-4 text-slate-100 shadow-inner transition-all focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500 focus:outline-none disabled:cursor-not-allowed disabled:opacity-50"
         bind:value={selectedModel}
-        onchange={() => {
-          if (typeof localStorage !== 'undefined') {
-            localStorage.setItem('pasapalabra_selected_model', selectedModel)
-          }
-        }}
         disabled={game.loading}>
         {#each AVAILABLE_MODELS as model (model.id)}
           <option value={model.id} disabled={exhaustedModels.includes(model.id)}>
@@ -122,6 +106,34 @@
         {/each}
       </select>
     </div>
+
+    {#if stats && stats.played > 0}
+      <div
+        class="animate-in fade-in fill-mode-both mb-6 flex items-center justify-center gap-6 rounded-xl border border-slate-700/40 bg-slate-900/30 px-6 py-3 text-sm delay-200 duration-500">
+        <div class="flex flex-col items-center gap-0.5">
+          <span class="text-xl font-extrabold text-slate-100">{stats.played}</span>
+          <span class="text-xs text-slate-500">Partidas</span>
+        </div>
+        <div class="h-8 w-px bg-slate-700/50"></div>
+        <div class="flex flex-col items-center gap-0.5">
+          <span class="text-xl font-extrabold text-indigo-400">{stats.won}</span>
+          <span class="text-xs text-slate-500">Perfectas</span>
+        </div>
+        {#if Object.keys(stats.failedLetters).length > 0}
+          <div class="h-8 w-px bg-slate-700/50"></div>
+          <div class="flex flex-col items-center gap-0.5">
+            <span class="text-xl font-extrabold text-amber-400">
+              {Object.entries(stats.failedLetters)
+                .sort(([, a], [, b]) => b - a)
+                .slice(0, 2)
+                .map(([l]) => l)
+                .join(', ')}
+            </span>
+            <span class="text-xs text-slate-500">Más falladas</span>
+          </div>
+        {/if}
+      </div>
+    {/if}
 
     <div class="group relative mx-auto w-full">
       <div

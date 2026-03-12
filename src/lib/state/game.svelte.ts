@@ -12,14 +12,18 @@ export class GameState {
   secureToken = $state('')
   modelId = $state<string | undefined>(undefined)
 
-  constructor(initialWords?: RoscoGenerateItem[], initialModelId?: string) {
+  constructor(
+    initialWords?: RoscoGenerateItem[] | WordItem[],
+    initialModelId?: string,
+    savedCurrentIndex?: number
+  ) {
     if (initialWords && initialWords.length > 0) {
-      this.words = initialWords.map((item) => ({
+      this.words = (initialWords as (RoscoGenerateItem | WordItem)[]).map((item) => ({
         ...item,
-        status: 'unanswered'
+        status: (item as WordItem).status ?? 'unanswered'
       }))
       this.status = 'playing'
-      this.currentIndex = 0
+      this.currentIndex = savedCurrentIndex ?? 0
       this.modelId = initialModelId
     }
   }
@@ -82,9 +86,8 @@ export class GameState {
     let nextIndex = (this.currentIndex + 1) % this.words.length
     let loops = 0
     while (
-      (this.words[nextIndex].status === 'correct' ||
-        this.words[nextIndex].status === 'incorrect') &&
-      loops < this.words.length
+      loops < this.words.length &&
+      (this.words[nextIndex].status === 'correct' || this.words[nextIndex].status === 'incorrect')
     ) {
       nextIndex = (nextIndex + 1) % this.words.length
       loops++
@@ -97,11 +100,19 @@ export class GameState {
     const isGameOver = this.words.every((w) => w.status === 'correct' || w.status === 'incorrect')
     if (isGameOver) {
       this.status = 'results'
+      // Limpiar la partida guardada al terminar
+      this.saveToSession(null)
     } else {
       const nextIdx = this.findNextUnansweredIndex()
       if (nextIdx !== -1) {
         this.currentIndex = nextIdx
       }
+      // Guardar estado tras cada respuesta
+      this.saveToSession({
+        words: $state.snapshot(this.words),
+        currentIndex: this.currentIndex,
+        modelId: this.modelId
+      })
     }
   }
 
@@ -120,20 +131,68 @@ export class GameState {
     this.checkGameOver()
   }
 
-  restart() {
-    this.words = []
+  async restart() {
     this.status = 'setup'
+    await this.saveToSession(null)
+    this.words = []
+    if (typeof window !== 'undefined') {
+      window.location.href = '/'
+    }
+  }
+
+  async saveToSession(
+    game: { words: WordItem[]; currentIndex: number; modelId?: string } | null
+  ): Promise<void> {
+    // Fire-and-forget: no bloqueamos la UI
+    // Solo guardamos si tenemos el secureToken (para evitar errores en SSR puro antes de hidratación)
+    if (!this.secureToken) return
+
+    // Si estamos guardando un estado (no borrándolo con null)
+    if (game && game.words) {
+      // No guardamos si no se ha interactuado con ninguna letra aún
+      const hasInteraction = game.words.some((w) => w.status !== 'unanswered')
+      if (!hasInteraction) return
+    }
+
+    return fetch('/api/save-game', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'x-pasapalabra-client': 'true',
+        'x-secure-token': this.secureToken
+      },
+      body: JSON.stringify({ game })
+    })
+      .then(async (res) => {
+        if (!res.ok) {
+          if (res.status === 401 || res.status === 403) {
+            this.errorMsg =
+              'Tu sesión de seguridad ha expirado. Por favor, recarga la página (F5) para seguir guardando tu progreso.'
+          } else {
+            const data = await res.json().catch(() => ({}))
+            this.errorMsg = data.error || 'Error al guardar la partida.'
+          }
+        }
+      })
+      .catch(() => {
+        // Error de red
+        this.errorMsg = 'Error de conexión. Es posible que tu progreso no se esté guardando.'
+      })
   }
 }
 
 const STATE_KEY = Symbol('GAME_STATE')
 
-export function initGameState(initialWords?: RoscoGenerateItem[], initialModelId?: string) {
-  const state = new GameState(initialWords, initialModelId)
+export function initGameState(
+  initialWords?: RoscoGenerateItem[] | WordItem[],
+  initialModelId?: string,
+  savedCurrentIndex?: number
+) {
+  const state = new GameState(initialWords, initialModelId, savedCurrentIndex)
   setContext(STATE_KEY, state)
   return state
 }
 
 export function getGameState() {
-  return getContext<ReturnType<typeof initGameState>>(STATE_KEY)
+  return getContext<GameState>(STATE_KEY)
 }
