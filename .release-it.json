@@ -9,6 +9,7 @@
     "commitMessage": "chore: release v${version}",
     "push": false,
     "tag": false,
+    "requireCleanWorkingDir": false,
     "tagName": "v${version}"
   },
   "npm": {

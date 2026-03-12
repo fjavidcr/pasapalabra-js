@@ -1,11 +1,17 @@
 # Changelog
 
-## 0.5.0 (2026-03-12)
+## 0.6.0 (2026-03-12)
 
 ### Features
 
 - Add game category selection to the setup screen, save the preference, and use it to theme AI-generated roscos. ([7c473f7](https://github.com/fjavidcr/pasapalabra-js/commit/7c473f770089af3395006fdff6a3ba36e1264ade))
 - Implement difficulty selection for AI-generated Pasapalabra roscos, including UI, session storage, and AI prompt adjustments. ([56fca9e](https://github.com/fjavidcr/pasapalabra-js/commit/56fca9ee4b18b2d4f41da9779e4685a986e7fd53))
+
+## 0.5.0 (2026-03-12)
+
+### Features
+
+- Add security tokens and SSR streaming for rosco generation.
 
 ## 0.4.0 (2026-03-12)
 
