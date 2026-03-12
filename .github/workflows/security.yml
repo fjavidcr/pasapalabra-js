@@ -6,11 +6,13 @@ on:
     branches:
       - main
       - master
+      - 'release/**'
   pull_request:
     types: [opened, synchronize, reopened]
     branches:
       - main
       - master
+      - 'release/**'
       - develop
 
 jobs:
