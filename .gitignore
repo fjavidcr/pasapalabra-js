@@ -28,3 +28,4 @@ pnpm-debug.log*
 .wrangler/
 .cf/
 /*.log
+wrangler.jsonc
