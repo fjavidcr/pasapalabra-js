@@ -14,6 +14,7 @@ export async function handleGameSSR(
   redirectRoute?: string
   secureToken: string
   preferredModelId?: string
+  preferredDifficulty?: string
   stats: GameStats
   savedGame?: SavedGame
 }> {
@@ -28,9 +29,12 @@ export async function handleGameSSR(
   }
 
   // Leer datos de sesión en paralelo
-  const [preferredModelId, stats, savedGame] = await Promise.all([
+  const [preferredModelId, preferredDifficulty, stats, savedGame] = await Promise.all([
     session
       ? (session.get('preferredModel') as Promise<string | undefined>)
+      : Promise.resolve(undefined),
+    session
+      ? (session.get('preferredDifficulty') as Promise<string | undefined>)
       : Promise.resolve(undefined),
     getStats(session),
     getSavedGame(session)
@@ -40,6 +44,7 @@ export async function handleGameSSR(
     const formData = await request.formData()
     const submittedToken = formData.get('secureToken') as string
     const submittedModelId = formData.get('modelId') as string
+    const submittedDifficulty = formData.get('difficulty') as string
 
     try {
       validateSecureToken(submittedToken)
@@ -48,8 +53,13 @@ export async function handleGameSSR(
         throw new Error('Modelo no válido seleccionado.')
       }
 
-      if (submittedModelId && session) {
-        session.set('preferredModel', submittedModelId)
+      if (session) {
+        if (submittedModelId) {
+          session.set('preferredModel', submittedModelId)
+        }
+        if (submittedDifficulty) {
+          session.set('preferredDifficulty', submittedDifficulty)
+        }
       }
 
       // 1. Generar el rosco
@@ -61,7 +71,8 @@ export async function handleGameSSR(
         await saveGame(session, {
           words: words.map((w: RoscoGenerateItem) => ({ ...w, status: 'unanswered' })),
           currentIndex: 0,
-          modelId: submittedModelId || undefined
+          modelId: submittedModelId || undefined,
+          difficulty: submittedDifficulty || 'medium'
         })
       }
 
@@ -87,5 +98,12 @@ export async function handleGameSSR(
     }
   }
 
-  return { setupErrorMsg, secureToken, preferredModelId, stats, savedGame }
+  return {
+    setupErrorMsg,
+    secureToken,
+    preferredModelId,
+    preferredDifficulty,
+    stats,
+    savedGame
+  }
 }

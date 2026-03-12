@@ -6,11 +6,14 @@ import { validateSecureToken } from '$lib/server/security'
 export async function generateRoscoWords(formData: FormData) {
   const secureToken = formData.get('secureToken') as string
   const modelId = (formData.get('modelId') as string) || DEFAULT_MODEL_ID
+  const difficulty = (formData.get('difficulty') as string) || 'medium'
 
   // Validar token antes de gastar recursos de la API
   validateSecureToken(secureToken)
 
-  console.log(`--- GEMINI AI: Generating new rosco with model ${modelId} ---`)
+  console.log(
+    `--- GEMINI AI: Generating new rosco with model ${modelId} and difficulty ${difficulty} ---`
+  )
 
   const apiKey = GEMINI_API_KEY
   if (!apiKey) {
@@ -19,17 +22,28 @@ export async function generateRoscoWords(formData: FormData) {
 
   const ai = new GoogleGenAI({ apiKey: apiKey })
 
+  const difficultyInstructions = {
+    easy: 'Usa palabras muy comunes, nombres de objetos cotidianos, animales o verbos simples. Las definiciones deben ser directas y fáciles de entender para cualquier persona.',
+    medium:
+      'Usa un nivel de vocabulario estándar de cultura general. Mezcla palabras comunes con algunas más específicas pero conocidas.',
+    hard: 'Usa palabras poco frecuentes, técnicas, literarias o cultas. Las definiciones pueden ser más complejas, precisas y desafiantes.'
+  }
+
   const systemInstruction = `
 Eres un creador experto de roscos para el juego Pasapalabra en español.
-Genera un rosco completo de 27 letras. Para hacer el juego más dinámico e impredecible, DEBES mezclar palabras que empiecen por la letra y palabras que la contengan. 
-No uses solo "empieza por", atrévete a usar "contiene la" en varias letras comunes (ej. "contiene la A", "contiene la E") y obligatoriamente para letras raras como X, Y, Z.
+Genera un rosco completo de 27 letras (A-Z, incluyendo Ñ).
+NIVEL DE DIFICULTAD: ${difficulty.toUpperCase()}.
+Instrucciones de nivel: ${difficultyInstructions[difficulty as keyof typeof difficultyInstructions] || difficultyInstructions.medium}
 
-Asegúrate de generar exactamente 27 objetos, uno para cada letra del abecedario español (A, B, C, D, E, F, G, H, I, J, L, M, N, Ñ, O, P, Q, R, S, T, U, V, X, Y, Z - puedes omitir K y W si es muy difícil, pero la longitud ideal es 25-27 letras).
-La palabra ("word") debe ser una palabra válida en el diccionario español.
-La definición ("definition") debe ser clara, concisa y referirse inequívocamente a la palabra.
-PROHIBICIÓN: No repitas nunca la misma palabra para letras diferentes. Cada una de las 27 palabras debe ser única.
+REGLAS CRÍTICAS:
+1. Dinamismo: Mezcla palabras que "EMPIEZA POR" y palabras que "CONTIENE LA" de forma variada en todo el rosco.
+2. Letras raras: Para letras como X, Y, Z, Q, J, siempre intenta combinaciones creativas (ej: "CONTIENE LA X").
+3. NO REPETICIÓN: Bajo ninguna circunstancia repitas la misma palabra en el mismo rosco.
+4. VARIEDAD HISTÓRICA: Evita las palabras más obvias o "clichés" de Pasapalabra (como "Abdomen" para la A o "Zulo" para la Z). Busca palabras frescas y originales que no se hayan usado recientemente en tus respuestas anteriores.
+5. Formato: Genera exactamente 27 objetos, uno para cada letra (A, B, C, D, E, F, G, H, I, J, K, L, M, N, Ñ, O, P, Q, R, S, T, U, V, W, X, Y, Z). Si K o W son muy difíciles, usa "CONTIENE LA".
+6. DEFINICIONES: Deben ser rigurosas pero adecuadas al nivel de dificultad seleccionado.
 `
-  const prompt = 'Genera un nuevo rosco de nivel intermedio ahora.'
+  const prompt = `Genera un rosco de Pasapalabra de nivel ${difficulty} con palabras variadas y originales.`
 
   try {
     const result = await ai.models.generateContent({
@@ -37,7 +51,7 @@ PROHIBICIÓN: No repitas nunca la misma palabra para letras diferentes. Cada una
       contents: prompt,
       config: {
         systemInstruction: systemInstruction,
-        temperature: 0.8,
+        temperature: 0.9, // Aumentada ligeramente para más variedad
         responseMimeType: 'application/json',
         responseSchema: {
           type: Type.ARRAY,

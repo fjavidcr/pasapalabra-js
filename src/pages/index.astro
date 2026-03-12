@@ -5,8 +5,15 @@ import Layout from '$layouts/Layout.astro'
 import { handleGameSSR } from '$lib/server/gameHandler'
 import '$styles/global.css'
 
-const { setupErrorMsg, redirectRoute, secureToken, preferredModelId, stats, savedGame } =
-  await handleGameSSR(Astro.request, Astro.session)
+const {
+  setupErrorMsg,
+  redirectRoute,
+  secureToken,
+  preferredModelId,
+  preferredDifficulty,
+  stats,
+  savedGame
+} = await handleGameSSR(Astro.request, Astro.session)
 
 console.log(`--- INDEX RENDER: Method=${Astro.request.method}, hasSavedGame=${!!savedGame} ---`)
 if (savedGame) {
@@ -37,6 +44,7 @@ if (redirectRoute) {
           secureToken={secureToken}
           errorMsg={setupErrorMsg}
           preferredModelId={preferredModelId}
+          preferredDifficulty={preferredDifficulty}
           stats={stats}
         />
       )

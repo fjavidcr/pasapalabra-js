@@ -47,6 +47,7 @@ export interface SavedGame {
   words: WordItem[]
   currentIndex: number
   modelId?: string
+  difficulty?: string
 }
 
 export async function getSavedGame(

@@ -16,20 +16,31 @@
     secureToken,
     errorMsg,
     preferredModelId,
+    preferredDifficulty,
     stats
-  }: { secureToken: string; errorMsg?: string; preferredModelId?: string; stats?: GameStats } =
-    $props()
+  }: {
+    secureToken: string
+    errorMsg?: string
+    preferredModelId?: string
+    preferredDifficulty?: string
+    stats?: GameStats
+  } = $props()
   const game = initGameState()
 
   let selectedModel = $state<GeminiModelId>(DEFAULT_MODEL_ID)
+  let selectedDifficulty = $state<string>('medium')
   let exhaustedModels = $state<string[]>([])
 
   $effect(() => {
-    // Restaurar modelo preferido desde sesión SSR (sin localStorage)
+    // Restaurar modelo y dificultad preferidos desde sesión SSR
     if (preferredModelId && AVAILABLE_MODELS.some((m) => m.id === preferredModelId)) {
       if (!exhaustedModels.includes(preferredModelId)) {
         selectedModel = preferredModelId as GeminiModelId
       }
+    }
+
+    if (preferredDifficulty) {
+      selectedDifficulty = preferredDifficulty
     }
 
     game.setSecureToken(secureToken)
@@ -107,6 +118,26 @@
       </select>
     </div>
 
+    <div class="group relative mx-auto mb-8 w-full text-left">
+      <label for="difficulty-select" class="mb-2 block pl-1 text-sm font-bold text-slate-200">
+        Nivel de Dificultad
+      </label>
+      <div class="grid grid-cols-3 gap-2">
+        {#each [{ id: 'easy', label: 'Fácil' }, { id: 'medium', label: 'Medio' }, { id: 'hard', label: 'Difícil' }] as diff (diff.id)}
+          <button
+            type="button"
+            class="flex h-12 items-center justify-center rounded-xl border border-slate-700 text-sm font-bold transition-all {selectedDifficulty ===
+            diff.id
+              ? 'border-indigo-500 bg-indigo-500/20 text-indigo-400 ring-2 ring-indigo-500'
+              : 'bg-slate-900/50 text-slate-400 hover:border-slate-500 hover:text-slate-200'}"
+            onclick={() => (selectedDifficulty = diff.id)}
+            disabled={game.loading}>
+            {diff.label}
+          </button>
+        {/each}
+      </div>
+    </div>
+
     {#if stats && stats.played > 0}
       <div
         class="animate-in fade-in fill-mode-both mb-6 flex items-center justify-center gap-6 rounded-xl border border-slate-700/40 bg-slate-900/30 px-6 py-3 text-sm delay-200 duration-500">
@@ -146,6 +177,7 @@
         }}>
         <input type="hidden" name="secureToken" value={game.secureToken} />
         <input type="hidden" name="modelId" value={selectedModel} />
+        <input type="hidden" name="difficulty" value={selectedDifficulty} />
         <Button
           type="submit"
           size="lg"
