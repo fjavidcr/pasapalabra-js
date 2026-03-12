@@ -11,11 +11,15 @@ export class GameState {
   roscoSize = $state(320)
   secureToken = $state('')
   modelId = $state<string | undefined>(undefined)
+  category = $state<string | undefined>(undefined)
+  difficulty = $state<string | undefined>(undefined)
 
   constructor(
     initialWords?: RoscoGenerateItem[] | WordItem[],
     initialModelId?: string,
-    savedCurrentIndex?: number
+    savedCurrentIndex?: number,
+    initialCategory?: string,
+    initialDifficulty?: string
   ) {
     if (initialWords && initialWords.length > 0) {
       this.words = (initialWords as (RoscoGenerateItem | WordItem)[]).map((item) => ({
@@ -25,6 +29,8 @@ export class GameState {
       this.status = 'playing'
       this.currentIndex = savedCurrentIndex ?? 0
       this.modelId = initialModelId
+      this.category = initialCategory
+      this.difficulty = initialDifficulty
     }
   }
 
@@ -111,7 +117,9 @@ export class GameState {
       this.saveToSession({
         words: $state.snapshot(this.words),
         currentIndex: this.currentIndex,
-        modelId: this.modelId
+        modelId: this.modelId,
+        category: this.category,
+        difficulty: this.difficulty
       })
     }
   }
@@ -141,7 +149,13 @@ export class GameState {
   }
 
   async saveToSession(
-    game: { words: WordItem[]; currentIndex: number; modelId?: string } | null
+    game: {
+      words: WordItem[]
+      currentIndex: number
+      modelId?: string
+      category?: string
+      difficulty?: string
+    } | null
   ): Promise<void> {
     // Fire-and-forget: no bloqueamos la UI
     // Solo guardamos si tenemos el secureToken (para evitar errores en SSR puro antes de hidratación)
@@ -186,9 +200,17 @@ const STATE_KEY = Symbol('GAME_STATE')
 export function initGameState(
   initialWords?: RoscoGenerateItem[] | WordItem[],
   initialModelId?: string,
-  savedCurrentIndex?: number
+  savedCurrentIndex?: number,
+  initialCategory?: string,
+  initialDifficulty?: string
 ) {
-  const state = new GameState(initialWords, initialModelId, savedCurrentIndex)
+  const state = new GameState(
+    initialWords,
+    initialModelId,
+    savedCurrentIndex,
+    initialCategory,
+    initialDifficulty
+  )
   setContext(STATE_KEY, state)
   return state
 }

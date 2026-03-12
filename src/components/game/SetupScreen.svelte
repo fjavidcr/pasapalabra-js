@@ -16,19 +16,52 @@
     secureToken,
     errorMsg,
     preferredModelId,
+    preferredDifficulty,
+    preferredCategory,
     stats
-  }: { secureToken: string; errorMsg?: string; preferredModelId?: string; stats?: GameStats } =
-    $props()
+  }: {
+    secureToken: string
+    errorMsg?: string
+    preferredModelId?: string
+    preferredDifficulty?: string
+    preferredCategory?: string
+    stats?: GameStats
+  } = $props()
   const game = initGameState()
 
   let selectedModel = $state<GeminiModelId>(DEFAULT_MODEL_ID)
+  let selectedDifficulty = $state<string>('medium')
+  let selectedCategory = $state<string>('general')
+  let customCategory = $state<string>('')
   let exhaustedModels = $state<string[]>([])
 
+  const CATEGORIES = [
+    { id: 'general', label: 'General' },
+    { id: 'ciencia', label: 'Ciencia' },
+    { id: 'deporte', label: 'Deporte' },
+    { id: 'historia', label: 'Historia' },
+    { id: 'cine', label: 'Cine' },
+    { id: 'custom', label: 'Otro' }
+  ]
+
   $effect(() => {
-    // Restaurar modelo preferido desde sesión SSR (sin localStorage)
+    // Restaurar preferencias desde sesión SSR
     if (preferredModelId && AVAILABLE_MODELS.some((m) => m.id === preferredModelId)) {
       if (!exhaustedModels.includes(preferredModelId)) {
         selectedModel = preferredModelId as GeminiModelId
+      }
+    }
+
+    if (preferredDifficulty) {
+      selectedDifficulty = preferredDifficulty
+    }
+
+    if (preferredCategory) {
+      if (CATEGORIES.some((c) => c.id === preferredCategory)) {
+        selectedCategory = preferredCategory
+      } else {
+        selectedCategory = 'custom'
+        customCategory = preferredCategory
       }
     }
 
@@ -107,6 +140,58 @@
       </select>
     </div>
 
+    <div class="group relative mx-auto mb-8 w-full text-left">
+      <label for="difficulty-select" class="mb-2 block pl-1 text-sm font-bold text-slate-200">
+        Nivel de Dificultad
+      </label>
+      <div class="grid grid-cols-3 gap-2">
+        {#each [{ id: 'easy', label: 'Fácil' }, { id: 'medium', label: 'Medio' }, { id: 'hard', label: 'Difícil' }] as diff (diff.id)}
+          <button
+            type="button"
+            class="flex h-12 items-center justify-center rounded-xl border border-slate-700 text-sm font-bold transition-all {selectedDifficulty ===
+            diff.id
+              ? 'border-indigo-500 bg-indigo-500/20 text-indigo-400 ring-2 ring-indigo-500'
+              : 'bg-slate-900/50 text-slate-400 hover:border-slate-500 hover:text-slate-200'}"
+            onclick={() => (selectedDifficulty = diff.id)}
+            disabled={game.loading}>
+            {diff.label}
+          </button>
+        {/each}
+      </div>
+    </div>
+
+    <div class="group relative mx-auto mb-8 w-full text-left">
+      <label for="category-select" class="mb-2 block pl-1 text-sm font-bold text-slate-200">
+        Temática del Rosco
+      </label>
+      <div class="grid grid-cols-3 gap-2">
+        {#each CATEGORIES as cat (cat.id)}
+          <button
+            type="button"
+            class="flex h-12 items-center justify-center rounded-xl border border-slate-700 text-sm font-bold transition-all {selectedCategory ===
+            cat.id
+              ? 'border-indigo-500 bg-indigo-500/20 text-indigo-400 ring-2 ring-indigo-500'
+              : 'bg-slate-900/50 text-slate-400 hover:border-slate-500 hover:text-slate-200'}"
+            onclick={() => (selectedCategory = cat.id)}
+            disabled={game.loading}>
+            {cat.label}
+          </button>
+        {/each}
+      </div>
+
+      {#if selectedCategory === 'custom'}
+        <div class="animate-in slide-in-from-top-2 mt-4 duration-300">
+          <input
+            type="text"
+            bind:value={customCategory}
+            placeholder="Ej: Cocina Japonesa, Mitología Egipcia..."
+            maxlength="50"
+            class="h-12 w-full rounded-xl border border-slate-700 bg-slate-900/80 px-4 text-sm text-slate-100 placeholder:text-slate-600 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500 focus:outline-none"
+            disabled={game.loading} />
+        </div>
+      {/if}
+    </div>
+
     {#if stats && stats.played > 0}
       <div
         class="animate-in fade-in fill-mode-both mb-6 flex items-center justify-center gap-6 rounded-xl border border-slate-700/40 bg-slate-900/30 px-6 py-3 text-sm delay-200 duration-500">
@@ -146,6 +231,11 @@
         }}>
         <input type="hidden" name="secureToken" value={game.secureToken} />
         <input type="hidden" name="modelId" value={selectedModel} />
+        <input type="hidden" name="difficulty" value={selectedDifficulty} />
+        <input
+          type="hidden"
+          name="category"
+          value={selectedCategory === 'custom' ? customCategory : selectedCategory} />
         <Button
           type="submit"
           size="lg"

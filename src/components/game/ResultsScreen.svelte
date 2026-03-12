@@ -37,6 +37,23 @@
           .slice(0, 3)
       : []
   )
+  // Mapas para visualización
+  const difficultyLabels: Record<string, string> = {
+    easy: 'Fácil',
+    medium: 'Medio',
+    hard: 'Difícil'
+  }
+
+  const difficultyColors: Record<string, string> = {
+    easy: 'text-emerald-400',
+    medium: 'text-amber-400',
+    hard: 'text-rose-400'
+  }
+
+  let difficultyLabel = $derived(game.difficulty ? difficultyLabels[game.difficulty] : 'Medio')
+  let difficultyColor = $derived(
+    game.difficulty ? difficultyColors[game.difficulty] : 'text-amber-400'
+  )
 </script>
 
 <Card
@@ -46,7 +63,23 @@
       <span class="bg-linear-to-br from-amber-500 to-orange-400 bg-clip-text text-transparent"
         >¡Juego Terminado!</span>
     </CardTitle>
-    <CardDescription class="mt-3 text-xl font-medium">Resumen de tu puntuación</CardDescription>
+    <CardDescription class="mt-3 text-xl font-medium">
+      <div class="flex flex-col items-center gap-1">
+        <span>Resumen de tu puntuación</span>
+        <div class="flex items-center gap-2 text-sm font-medium">
+          {#if game.category && game.category !== 'general'}
+            <span class="text-slate-500">
+              Tema: <span class="text-sky-400"
+                >{game.category.charAt(0).toUpperCase() + game.category.slice(1)}</span>
+            </span>
+            <span class="h-3 w-px bg-slate-700/50"></span>
+          {/if}
+          <span class="text-slate-500">
+            Nivel: <span class={difficultyColor}>{difficultyLabel}</span>
+          </span>
+        </div>
+      </div>
+    </CardDescription>
   </CardHeader>
   <CardContent
     class="border-border/50 my-4 flex flex-col gap-8 border-y bg-slate-50/30 py-10 dark:bg-slate-900/30">
