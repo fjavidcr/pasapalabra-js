@@ -1,0 +1,81 @@
+<svg width="512" height="512" viewBox="0 0 512 512" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="bg_grad" x1="0" y1="0" x2="512" y2="512" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#0066FF"/>
+      <stop offset="0.5" stop-color="#8B5CF6"/>
+      <stop offset="1" stop-color="#FF6600"/>
+    </linearGradient>
+    <filter id="glow" x="-20%" y="-20%" width="140%" height="140%">
+      <feGaussianBlur stdDeviation="5" result="blur"/>
+      <feComposite in="SourceGraphic" in2="blur" operator="over"/>
+    </filter>
+  </defs>
+
+  <!-- Main Rosco Background -->
+  <circle cx="256" cy="256" r="250" fill="url(#bg_grad)"/>
+  
+  <!-- Inner Glass Effect -->
+  <circle cx="256" cy="256" r="180" fill="white" fill-opacity="0.05" stroke="white" stroke-opacity="0.1" stroke-width="2"/>
+
+  <!-- The P Logo -->
+  <path d="M170 140H310C365.228 140 410 184.772 410 240C410 295.228 365.228 340 310 340H240V400H170V140ZM240 210V270H310C326.569 270 340 256.569 340 240C340 223.431 326.569 210 310 210H240Z" fill="white" filter="url(#glow)"/>
+
+  <!-- Bubbles with Letters -->
+  <g>
+    
+    <circle cx="256" cy="46" r="18" fill="white" fill-opacity="0.2" stroke="white" stroke-opacity="0.4" stroke-width="1"/>
+    <text x="256" y="52" font-family="Outfit, sans-serif" font-size="14" text-anchor="middle" fill="white" font-weight="900">A</text>
+    <circle cx="304.42933285591243" cy="51.66057717823699" r="18" fill="white" fill-opacity="0.2" stroke="white" stroke-opacity="0.4" stroke-width="1"/>
+    <text x="304.42933285591243" y="57.66057717823699" font-family="Outfit, sans-serif" font-size="14" text-anchor="middle" fill="white" font-weight="900">B</text>
+    <circle cx="350.2478278420971" cy="68.33714553208344" r="18" fill="white" fill-opacity="0.2" stroke="white" stroke-opacity="0.4" stroke-width="1"/>
+    <text x="350.2478278420971" y="74.33714553208344" font-family="Outfit, sans-serif" font-size="14" text-anchor="middle" fill="white" font-weight="900">C</text>
+    <circle cx="390.9853980341733" cy="95.13066694501461" r="18" fill="white" fill-opacity="0.2" stroke="white" stroke-opacity="0.4" stroke-width="1"/>
+    <text x="390.9853980341733" y="101.13066694501461" font-family="Outfit, sans-serif" font-size="14" text-anchor="middle" fill="white" font-weight="900">D</text>
+    <circle cx="424.4458704785592" cy="130.5966957424149" r="18" fill="white" fill-opacity="0.2" stroke="white" stroke-opacity="0.4" stroke-width="1"/>
+    <text x="424.4458704785592" y="136.5966957424149" font-family="Outfit, sans-serif" font-size="14" text-anchor="middle" fill="white" font-weight="900">E</text>
+    <circle cx="448.82538244485755" cy="172.82324913177706" r="18" fill="white" fill-opacity="0.2" stroke="white" stroke-opacity="0.4" stroke-width="1"/>
+    <text x="448.82538244485755" y="178.82324913177706" font-family="Outfit, sans-serif" font-size="14" text-anchor="middle" fill="white" font-weight="900">F</text>
+    <circle cx="462.8096281325637" cy="219.53388268994462" r="18" fill="white" fill-opacity="0.2" stroke="white" stroke-opacity="0.4" stroke-width="1"/>
+    <text x="462.8096281325637" y="225.53388268994462" font-family="Outfit, sans-serif" font-size="14" text-anchor="middle" fill="white" font-weight="900">G</text>
+    <circle cx="465.6447132369663" cy="268.2104140711999" r="18" fill="white" fill-opacity="0.2" stroke="white" stroke-opacity="0.4" stroke-width="1"/>
+    <text x="465.6447132369663" y="274.2104140711999" font-family="Outfit, sans-serif" font-size="14" text-anchor="middle" fill="white" font-weight="900">H</text>
+    <circle cx="457.17779758625267" cy="316.2286788693289" r="18" fill="white" fill-opacity="0.2" stroke="white" stroke-opacity="0.4" stroke-width="1"/>
+    <text x="457.17779758625267" y="322.2286788693289" font-family="Outfit, sans-serif" font-size="14" text-anchor="middle" fill="white" font-weight="900">I</text>
+    <circle cx="437.8653347947321" cy="361" r="18" fill="white" fill-opacity="0.2" stroke="white" stroke-opacity="0.4" stroke-width="1"/>
+    <text x="437.8653347947321" y="367" font-family="Outfit, sans-serif" font-size="14" text-anchor="middle" fill="white" font-weight="900">J</text>
+    <circle cx="408.74846473034023" cy="400.11074395243406" r="18" fill="white" fill-opacity="0.2" stroke="white" stroke-opacity="0.4" stroke-width="1"/>
+    <text x="408.74846473034023" y="406.11074395243406" font-family="Outfit, sans-serif" font-size="14" text-anchor="middle" fill="white" font-weight="900">K</text>
+    <circle cx="371.3968853948693" cy="431.4524403967166" r="18" fill="white" fill-opacity="0.2" stroke="white" stroke-opacity="0.4" stroke-width="1"/>
+    <text x="371.3968853948693" y="437.4524403967166" font-family="Outfit, sans-serif" font-size="14" text-anchor="middle" fill="white" font-weight="900">L</text>
+    <circle cx="327.82423009839044" cy="453.33545036504074" r="18" fill="white" fill-opacity="0.2" stroke="white" stroke-opacity="0.4" stroke-width="1"/>
+    <text x="327.82423009839044" y="459.33545036504074" font-family="Outfit, sans-serif" font-size="14" text-anchor="middle" fill="white" font-weight="900">M</text>
+    <circle cx="280.37951196629837" cy="464.58005512580803" r="18" fill="white" fill-opacity="0.2" stroke="white" stroke-opacity="0.4" stroke-width="1"/>
+    <text x="280.37951196629837" y="470.58005512580803" font-family="Outfit, sans-serif" font-size="14" text-anchor="middle" fill="white" font-weight="900">N</text>
+    <circle cx="231.62048803370166" cy="464.58005512580803" r="18" fill="white" fill-opacity="0.2" stroke="white" stroke-opacity="0.4" stroke-width="1"/>
+    <text x="231.62048803370166" y="470.58005512580803" font-family="Outfit, sans-serif" font-size="14" text-anchor="middle" fill="white" font-weight="900">Ñ</text>
+    <circle cx="184.17576990160956" cy="453.33545036504074" r="18" fill="white" fill-opacity="0.2" stroke="white" stroke-opacity="0.4" stroke-width="1"/>
+    <text x="184.17576990160956" y="459.33545036504074" font-family="Outfit, sans-serif" font-size="14" text-anchor="middle" fill="white" font-weight="900">O</text>
+    <circle cx="140.60311460513083" cy="431.4524403967167" r="18" fill="white" fill-opacity="0.2" stroke="white" stroke-opacity="0.4" stroke-width="1"/>
+    <text x="140.60311460513083" y="437.4524403967167" font-family="Outfit, sans-serif" font-size="14" text-anchor="middle" fill="white" font-weight="900">P</text>
+    <circle cx="103.25153526965977" cy="400.11074395243406" r="18" fill="white" fill-opacity="0.2" stroke="white" stroke-opacity="0.4" stroke-width="1"/>
+    <text x="103.25153526965977" y="406.11074395243406" font-family="Outfit, sans-serif" font-size="14" text-anchor="middle" fill="white" font-weight="900">Q</text>
+    <circle cx="74.13466520526791" cy="361.00000000000006" r="18" fill="white" fill-opacity="0.2" stroke="white" stroke-opacity="0.4" stroke-width="1"/>
+    <text x="74.13466520526791" y="367.00000000000006" font-family="Outfit, sans-serif" font-size="14" text-anchor="middle" fill="white" font-weight="900">R</text>
+    <circle cx="54.82220241374736" cy="316.22867886932903" r="18" fill="white" fill-opacity="0.2" stroke="white" stroke-opacity="0.4" stroke-width="1"/>
+    <text x="54.82220241374736" y="322.22867886932903" font-family="Outfit, sans-serif" font-size="14" text-anchor="middle" fill="white" font-weight="900">S</text>
+    <circle cx="46.35528676303369" cy="268.2104140712" r="18" fill="white" fill-opacity="0.2" stroke="white" stroke-opacity="0.4" stroke-width="1"/>
+    <text x="46.35528676303369" y="274.2104140712" font-family="Outfit, sans-serif" font-size="14" text-anchor="middle" fill="white" font-weight="900">T</text>
+    <circle cx="49.19037186743628" cy="219.5338826899447" r="18" fill="white" fill-opacity="0.2" stroke="white" stroke-opacity="0.4" stroke-width="1"/>
+    <text x="49.19037186743628" y="225.5338826899447" font-family="Outfit, sans-serif" font-size="14" text-anchor="middle" fill="white" font-weight="900">U</text>
+    <circle cx="63.17461755514245" cy="172.82324913177712" r="18" fill="white" fill-opacity="0.2" stroke="white" stroke-opacity="0.4" stroke-width="1"/>
+    <text x="63.17461755514245" y="178.82324913177712" font-family="Outfit, sans-serif" font-size="14" text-anchor="middle" fill="white" font-weight="900">V</text>
+    <circle cx="87.55412952144076" cy="130.59669574241497" r="18" fill="white" fill-opacity="0.2" stroke="white" stroke-opacity="0.4" stroke-width="1"/>
+    <text x="87.55412952144076" y="136.59669574241497" font-family="Outfit, sans-serif" font-size="14" text-anchor="middle" fill="white" font-weight="900">W</text>
+    <circle cx="121.0146019658267" cy="95.13066694501464" r="18" fill="white" fill-opacity="0.2" stroke="white" stroke-opacity="0.4" stroke-width="1"/>
+    <text x="121.0146019658267" y="101.13066694501464" font-family="Outfit, sans-serif" font-size="14" text-anchor="middle" fill="white" font-weight="900">X</text>
+    <circle cx="161.75217215790292" cy="68.33714553208344" r="18" fill="white" fill-opacity="0.2" stroke="white" stroke-opacity="0.4" stroke-width="1"/>
+    <text x="161.75217215790292" y="74.33714553208344" font-family="Outfit, sans-serif" font-size="14" text-anchor="middle" fill="white" font-weight="900">Y</text>
+    <circle cx="207.5706671440875" cy="51.66057717823699" r="18" fill="white" fill-opacity="0.2" stroke="white" stroke-opacity="0.4" stroke-width="1"/>
+    <text x="207.5706671440875" y="57.66057717823699" font-family="Outfit, sans-serif" font-size="14" text-anchor="middle" fill="white" font-weight="900">Z</text>
+  </g>
+</svg>
