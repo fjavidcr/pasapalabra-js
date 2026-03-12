@@ -1,9 +1,14 @@
 {
+  "hooks": {
+    "before:init": "git fetch --tags"
+  },
   "github": {
     "release": false
   },
   "git": {
     "commitMessage": "chore: release v${version}",
+    "push": false,
+    "tag": false,
     "tagName": "v${version}"
   },
   "npm": {
