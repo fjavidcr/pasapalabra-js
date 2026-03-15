@@ -1,0 +1,3 @@
+## 2026-03-15 - [Add structural grouping and accessibility labels to semantic custom Radiogroup]
+**Learning:** Custom interactive elements (e.g., custom Svelte select/radios) styled like grid items or basic buttons lack semantic meaning for screen readers. Using `id`s directly inside grid maps on non-input labels, or generic placeholders on inputs without labels break assistive technologies flow.
+**Action:** When a `<label>` cannot target an explicitly mapped interactive ID (like an `input`), change the wrapper to a `<div>` and map the target container `role="radiogroup"` using `aria-labelledby`. Ensure individual mapped sub-components carry appropriate `role="radio"` and `aria-checked` bindings.

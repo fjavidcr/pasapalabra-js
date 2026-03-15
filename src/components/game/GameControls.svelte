@@ -47,6 +47,7 @@
         </div>
         <Input
           bind:value={game.answer}
+          aria-label="Escribe tu respuesta"
           placeholder="Escribe tu respuesta..."
           autocomplete="off"
           class="focus-visible:border-primary/50 focus-visible:ring-primary/30 relative rounded-xl border-2 border-transparent bg-white/80 py-8 text-center text-2xl font-bold shadow-inner transition-all dark:bg-slate-900/80"
