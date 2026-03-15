@@ -1,5 +1,6 @@
 <script lang="ts">
   import { onMount } from 'svelte'
+  import { ExternalLink } from '@lucide/svelte'
   import { Badge } from '$lib/components/ui/badge'
   import { Button } from '$lib/components/ui/button'
   import {
@@ -143,6 +144,17 @@
                   {item.letter}
                 </span>
                 <span class="text-lg font-bold text-slate-100">{item.word}</span>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  href="https://dle.rae.es/{item.word.toLowerCase()}"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  class="ml-auto text-xs font-medium text-slate-500 hover:text-sky-400"
+                  title="Ver en la RAE">
+                  <span class="mr-1">Ver en la RAE</span>
+                  <ExternalLink class="size-3" />
+                </Button>
               </div>
               <p class="mt-2 pl-11 text-sm text-slate-400">{item.definition}</p>
             </li>
