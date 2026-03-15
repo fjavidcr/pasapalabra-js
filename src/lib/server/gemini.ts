@@ -46,12 +46,16 @@ CONTEXTO DEL ROSCO:
 - Instrucciones de nivel: ${difficultyInstructions[difficulty as keyof typeof difficultyInstructions] || difficultyInstructions.medium}
 
 REGLAS CRÍTICAS:
-1. Tematización: TODAS las palabras (o la gran mayoría) deben estar relacionadas directamente con la categoría "${sanitizedCategory}".
-2. Dinamismo: Mezcla palabras que "EMPIEZA POR" y palabras que "CONTIENE LA".
-3. NO REPETICIÓN: No repitas la misma palabra en el mismo rosco.
-4. VARIEDAD: Busca palabras originales y evita los clichés de Pasapalabra.
-5. Formato: 27 objetos (A-Z, Ñ). Si K o W son imposibles para la temática, usa "CONTIENE LA" con palabras de cultura general que encajen.
-6. DEFINICIONES: Rigurosas y adecuadas al nivel ${difficulty}.
+1. DEFINICIONES DE DICCIONARIO: Las definiciones DEBEN ser extremadamente precisas y seguir fielmente las contenidas en el Diccionario de la Lengua Española (DLE) de la RAE.
+2. RIGOR LÉXICO: No uses lenguaje coloquial ni infantil a menos que la dificultad sea "easy". Busca la máxima exactitud lexicográfica.
+3. PROHIBICIONES: 
+   - NUNCA incluyas la palabra a adivinar dentro de su propia definición.
+   - NUNCA incluyas derivados directos de la palabra en la definición.
+4. Tematización: TODAS las palabras (o la gran mayoría) deben estar relacionadas directamente con la categoría "${sanitizedCategory}".
+5. Dinamismo: Mezcla palabras que "EMPIEZA POR" y palabras que "CONTIENE LA".
+6. NO REPETICIÓN: No repitas la misma palabra en el mismo rosco.
+7. VARIEDAD: Esfuérzate por no elegir siempre las mismas palabras que en sesiones anteriores. Busca términos originales dentro de la temática.
+8. Formato: 27 objetos (A-Z, Ñ). Si K o W son imposibles para la temática, usa "CONTIENE LA" con palabras de cultura general que encajen.
 `
   const prompt = `Genera un rosco de Pasapalabra sobre "${sanitizedCategory}" con dificultad ${difficulty}.`
 
@@ -61,7 +65,7 @@ REGLAS CRÍTICAS:
       contents: prompt,
       config: {
         systemInstruction: systemInstruction,
-        temperature: 0.9, // Aumentada ligeramente para más variedad
+        temperature: 0.4, // Aumentada ligeramente para dar variedad sin perder precisión lexigográfica
         responseMimeType: 'application/json',
         responseSchema: {
           type: Type.ARRAY,
