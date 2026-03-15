@@ -51,10 +51,6 @@ export class GameState {
     return this.words.filter((w) => w.status === 'incorrect').length
   }
 
-  normalizeString(str: string): string {
-    return normalizeString(str)
-  }
-
   async generateRosco() {
     try {
       this.loading = true
@@ -123,8 +119,7 @@ export class GameState {
 
   submitAnswer() {
     if (!this.answer) return
-    const isCorrect =
-      this.normalizeString(this.answer) === this.normalizeString(this.currentItem.word)
+    const isCorrect = normalizeString(this.answer) === normalizeString(this.currentItem.word)
     this.words[this.currentIndex].status = isCorrect ? 'correct' : 'incorrect'
     this.answer = ''
     this.checkGameOver()
