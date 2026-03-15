@@ -1,5 +1,15 @@
 # Changelog
 
+## [0.7.0](https://github.com/fjavidcr/pasapalabra-js/compare/v0.6.0...v0.7.0) (2026-03-15)
+
+### Features
+
+- update favicon.svg to a rosco design, delete favicon.ico, and archive previous favicon assets. ([94577de](https://github.com/fjavidcr/pasapalabra-js/commit/94577def17534faeba254e92ba2c823940fe21e4))
+
+### Bug Fixes
+
+- Correct "Pasapalabra AI" to "Pasapalabra IA" in the setup screen title. ([3fa4a9f](https://github.com/fjavidcr/pasapalabra-js/commit/3fa4a9f44ccc10c9a4ebb23d202aa31a2bd67a4f))
+
 ## 0.6.0 (2026-03-12)
 
 ### Features
