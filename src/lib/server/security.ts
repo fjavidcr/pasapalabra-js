@@ -75,6 +75,7 @@ export function validateApiRequest(request: Request): Response | null {
   const allowedOrigin = import.meta.env.PROD ? url.origin : 'http://localhost:4321'
 
   if (
+    (!origin && !referer) ||
     (origin && !origin.startsWith(allowedOrigin)) ||
     (referer && !referer.startsWith(allowedOrigin))
   ) {
