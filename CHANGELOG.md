@@ -1,5 +1,19 @@
 # Changelog
 
+## [0.8.0](https://github.com/fjavidcr/pasapalabra-js/compare/v0.6.0...v0.8.0) (2026-03-15)
+
+### Features
+
+* Add a footer displaying the project version and wrap content in a main tag. ([31f5fa4](https://github.com/fjavidcr/pasapalabra-js/commit/31f5fa45d0416a4d94b61004f50c354581d2e550))
+* add RAE dictionary lookup button for each word on the results screen. ([9cbf6e3](https://github.com/fjavidcr/pasapalabra-js/commit/9cbf6e3bc14e41425994dc88b046a2796369fad8))
+* Add system instruction for word variety and increase Gemini model temperature. ([37f584e](https://github.com/fjavidcr/pasapalabra-js/commit/37f584e86e501c9b45dd6b2576123e027c6435bf))
+* refine Gemini prompt rules for dictionary-accurate definitions and reduce generation temperature for increased precision. ([7b867cb](https://github.com/fjavidcr/pasapalabra-js/commit/7b867cbb5adff6cdbe0bcc277d7974ecc7ad6d3e))
+* update favicon.svg to a rosco design, delete favicon.ico, and archive previous favicon assets. ([94577de](https://github.com/fjavidcr/pasapalabra-js/commit/94577def17534faeba254e92ba2c823940fe21e4))
+
+### Bug Fixes
+
+* Correct "Pasapalabra AI" to "Pasapalabra IA" in the setup screen title. ([3fa4a9f](https://github.com/fjavidcr/pasapalabra-js/commit/3fa4a9f44ccc10c9a4ebb23d202aa31a2bd67a4f))
+
 ## [0.7.0](https://github.com/fjavidcr/pasapalabra-js/compare/v0.6.0...v0.7.0) (2026-03-15)
 
 ### Features
