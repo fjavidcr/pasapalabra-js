@@ -1,5 +1,6 @@
 import { getContext, setContext } from 'svelte'
 import type { RoscoGenerateItem, WordItem } from '$lib/types'
+import { normalizeString } from '$lib/utils/string'
 
 export class GameState {
   status = $state<'setup' | 'playing' | 'results'>('setup')
@@ -51,11 +52,7 @@ export class GameState {
   }
 
   normalizeString(str: string): string {
-    return str
-      .trim()
-      .toLowerCase()
-      .normalize('NFD')
-      .replace(/[\u0300-\u036f]/g, '')
+    return normalizeString(str)
   }
 
   async generateRosco() {

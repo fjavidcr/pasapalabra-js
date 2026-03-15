@@ -27,6 +27,7 @@
     "deploy:preview": "npm run build && wrangler deploy --env preview",
     "deploy:pro": "npm run build && wrangler deploy --env production",
     "astro": "astro",
+    "test": "node --experimental-strip-types --test 'src/**/*.test.ts'",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
     "lint": "eslint .",
