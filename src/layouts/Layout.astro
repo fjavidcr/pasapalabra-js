@@ -1,4 +1,6 @@
 ---
+import { version } from '../../package.json'
+
 export interface Props {
   title?: string
 }
@@ -32,7 +34,14 @@ const { title = 'Pasapalabra IA' } = Astro.props
     <meta property="og:type" content="website" />
     <link rel="canonical" href={new URL(Astro.url.pathname, Astro.site || Astro.url)} />
   </head>
-  <body>
-    <slot />
+  <body class="flex min-h-screen flex-col">
+    <main class="grow">
+      <slot />
+    </main>
+    <footer class="py-6 text-center">
+      <p class="text-xs font-medium tracking-wider text-zinc-500/60 uppercase">
+        v{version}
+      </p>
+    </footer>
   </body>
 </html>
