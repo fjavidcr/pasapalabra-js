@@ -1,7 +1,7 @@
 {
   "name": "pasapalabra-js",
   "type": "module",
-  "version": "0.6.0",
+  "version": "0.7.0",
   "description": "El clásico juego del rosco en JavaScript",
   "author": "Javi del Castillo",
   "keywords": [
@@ -27,6 +27,7 @@
     "deploy:preview": "npm run build && wrangler deploy --env preview",
     "deploy:pro": "npm run build && wrangler deploy --env production",
     "astro": "astro",
+    "test": "node --experimental-strip-types --test 'src/**/*.test.ts'",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
     "lint": "eslint .",

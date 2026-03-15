@@ -1,5 +1,6 @@
 import { getContext, setContext } from 'svelte'
 import type { RoscoGenerateItem, WordItem } from '$lib/types'
+import { normalizeString } from '$lib/utils/string'
 
 export class GameState {
   status = $state<'setup' | 'playing' | 'results'>('setup')
@@ -48,14 +49,6 @@ export class GameState {
 
   get incorrectCount() {
     return this.words.filter((w) => w.status === 'incorrect').length
-  }
-
-  normalizeString(str: string): string {
-    return str
-      .trim()
-      .toLowerCase()
-      .normalize('NFD')
-      .replace(/[\u0300-\u036f]/g, '')
   }
 
   async generateRosco() {
@@ -126,8 +119,7 @@ export class GameState {
 
   submitAnswer() {
     if (!this.answer) return
-    const isCorrect =
-      this.normalizeString(this.answer) === this.normalizeString(this.currentItem.word)
+    const isCorrect = normalizeString(this.answer) === normalizeString(this.currentItem.word)
     this.words[this.currentIndex].status = isCorrect ? 'correct' : 'incorrect'
     this.answer = ''
     this.checkGameOver()
