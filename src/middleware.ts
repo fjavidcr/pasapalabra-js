@@ -59,7 +59,7 @@ export const onRequest = defineMiddleware(async (context, next) => {
   if (response.headers.get('content-type')?.includes('text/html')) {
     const body = await response.text()
     // Inyectamos el nonce en todas las etiquetas <script> que no lo tengan
-    const transformedBody = body.replace(/<script(?![^>]*nonce=)/g, `<script nonce="${nonce}"`)
+    const transformedBody = body.replace(/<script(?![^>]*nonce=)/gi, `<script nonce="${nonce}"`)
     return new Response(transformedBody, {
       status: response.status,
       statusText: response.statusText,
