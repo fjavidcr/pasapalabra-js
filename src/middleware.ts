@@ -35,8 +35,9 @@ export const onRequest = defineMiddleware(async (context, next) => {
     styleSrc.push("'unsafe-inline'")
   } else {
     // Solo en producción activamos la política estricta de nonces
-    scriptSrc.push(`'nonce-${nonce}'`)
-    styleSrc.push(`'nonce-${nonce}'`)
+    // Añadimos 'unsafe-inline' para compatibilidad con navegadores antiguos (los modernos lo ignorarán por el nonce)
+    scriptSrc.push(`'nonce-${nonce}'`, "'unsafe-inline'")
+    styleSrc.push(`'nonce-${nonce}'`, "'unsafe-inline'")
   }
 
   const csp = [
