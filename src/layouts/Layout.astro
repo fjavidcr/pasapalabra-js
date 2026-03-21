@@ -12,7 +12,9 @@ const { title = 'Pasapalabra IA' } = Astro.props
 <html lang="es" class="dark">
   <head>
     <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width" />
+    <meta name="referrer" content="strict-origin-when-cross-origin" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -33,11 +35,12 @@ const { title = 'Pasapalabra IA' } = Astro.props
     />
     <meta property="og:type" content="website" />
     <link rel="canonical" href={new URL(Astro.url.pathname, Astro.site || Astro.url)} />
+    <link rel="apple-touch-icon" href="/favicon.svg" />
   </head>
   <body class="flex min-h-screen flex-col">
-    <main class="grow">
+    <div class="flex grow flex-col">
       <slot />
-    </main>
+    </div>
     <footer class="py-6 text-center">
       <p class="text-xs font-medium tracking-wider text-zinc-500/60 uppercase">
         v{version}
