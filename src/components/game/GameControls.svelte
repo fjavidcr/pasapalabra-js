@@ -19,12 +19,16 @@
     class="border-border/50 flex flex-col items-center gap-6 border-b px-6 pt-8 pb-6 text-center sm:flex-row sm:items-start sm:px-8 sm:text-left">
     <div
       class="bg-primary/10 ring-primary/20 inline-flex h-20 w-20 shrink-0 items-center justify-center rounded-full shadow-inner ring-4">
-      <CardTitle class="text-primary text-glow text-6xl font-black tracking-tight uppercase">
+      <CardTitle
+        aria-label="Letra {game.currentItem.letter.toUpperCase()}"
+        class="text-primary text-glow text-6xl font-black tracking-tight uppercase">
         {game.currentItem.letter}
       </CardTitle>
     </div>
     <div class="flex flex-col justify-center pt-1 sm:pt-2">
-      <CardDescription class="text-foreground text-xl leading-relaxed font-medium sm:text-2xl">
+      <CardDescription
+        aria-live="polite"
+        class="text-foreground text-xl leading-relaxed font-medium sm:text-2xl">
         <span
           class="from-primary mr-2 bg-linear-to-r to-purple-500 bg-clip-text font-bold text-transparent">
           {game.currentItem.type === 'INCLUDES' ? 'Contiene la' : 'Empieza por la'}
@@ -48,6 +52,7 @@
         <Input
           bind:value={game.answer}
           placeholder="Escribe tu respuesta..."
+          aria-label="Escribe tu respuesta para la letra {game.currentItem.letter.toUpperCase()}"
           autocomplete="off"
           class="focus-visible:border-primary/50 focus-visible:ring-primary/30 relative rounded-xl border-2 border-transparent bg-white/80 py-8 text-center text-2xl font-bold shadow-inner transition-all dark:bg-slate-900/80"
           autofocus />
