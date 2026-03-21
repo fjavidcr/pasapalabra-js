@@ -28,6 +28,8 @@ export default defineConfig({
       external: ['node:async_hooks']
     },
     build: {
+      assetsInlineLimit: 0,
+      cssCodeSplit: true,
       rollupOptions: {
         output: {
           manualChunks: (id) => {

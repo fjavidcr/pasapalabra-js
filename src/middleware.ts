@@ -1,6 +1,14 @@
 import { defineMiddleware } from 'astro:middleware'
 
-export const onRequest = defineMiddleware(async (_context, next) => {
+export const onRequest = defineMiddleware(async (context, next) => {
+  // Generate a cryptographically secure nonce for this request
+  const nonce = btoa(String.fromCharCode(...crypto.getRandomValues(new Uint8Array(16)))).replace(
+    /[+/=]/g,
+    ''
+  )
+
+  context.locals.nonce = nonce
+
   const response = await next()
 
   // Seguridad: Cabeceras recomendadas por OWASP
@@ -13,10 +21,37 @@ export const onRequest = defineMiddleware(async (_context, next) => {
     'Permissions-Policy',
     'geolocation=(), camera=(), microphone=(), display-capture=()'
   )
-  response.headers.set(
-    'Content-Security-Policy',
-    "default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data:; connect-src 'self'; base-uri 'self'; form-action 'self'; frame-ancestors 'none';"
-  )
+
+  // Content Security Policy (CSP)
+  const isDev = import.meta.env.DEV
+
+  // En producción usamos nonces, en desarrollo permitimos unsafe-inline
+  // El navegador IGNORA 'unsafe-inline' si hay un nonce, por lo que en dev NO ponemos el nonce
+  const scriptSrc = ["'self'"]
+  const styleSrc = ["'self'", 'https://fonts.googleapis.com']
+
+  if (isDev) {
+    scriptSrc.push("'unsafe-inline'")
+    styleSrc.push("'unsafe-inline'")
+  } else {
+    // Solo en producción activamos la política estricta de nonces
+    scriptSrc.push(`'nonce-${nonce}'`)
+    styleSrc.push(`'nonce-${nonce}'`)
+  }
+
+  const csp = [
+    "default-src 'self'",
+    `script-src ${scriptSrc.join(' ')}`,
+    `style-src ${styleSrc.join(' ')}`,
+    "font-src 'self' https://fonts.gstatic.com",
+    "img-src 'self' data:",
+    "connect-src 'self'",
+    "base-uri 'self'",
+    "form-action 'self'",
+    "frame-ancestors 'none'"
+  ].join('; ')
+
+  response.headers.set('Content-Security-Policy', csp)
 
   return response
 })
