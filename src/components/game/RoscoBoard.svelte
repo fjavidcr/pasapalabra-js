@@ -19,7 +19,16 @@
     {@const pos = getPosition(i, game.words.length, game.roscoSize / 2)}
     {@const isActive =
       i === game.currentIndex && item.status !== 'correct' && item.status !== 'incorrect'}
+    {@const statusLabel =
+      item.status === 'correct'
+        ? 'correcta'
+        : item.status === 'incorrect'
+          ? 'fallada'
+          : item.status === 'passed'
+            ? 'pasada'
+            : 'pendiente'}
     <div
+      aria-label="Letra {item.letter.toUpperCase()}: {statusLabel}{isActive ? ', actual' : ''}"
       class={cn(
         'rosco-item absolute flex flex-col items-center justify-center rounded-full border-[3px] text-xl font-extrabold text-white backdrop-blur-sm',
         item.status === 'unanswered' || item.status === 'passed'

@@ -140,6 +140,7 @@
               class="flex flex-col gap-1 rounded-xl border border-slate-700/50 bg-slate-900/40 p-4 shadow-sm backdrop-blur-md">
               <div class="flex items-center gap-3">
                 <span
+                  aria-label="Letra {item.letter}"
                   class="flex size-8 shrink-0 items-center justify-center rounded-full border border-red-500/30 bg-red-500/20 text-sm font-bold text-red-400">
                   {item.letter}
                 </span>

@@ -1,5 +1,17 @@
 # Changelog
 
+## [0.9.0](https://github.com/fjavidcr/pasapalabra-js/compare/v0.8.0...v0.9.0) (2026-03-21)
+
+### Features
+
+- add agent skills ([04bd421](https://github.com/fjavidcr/pasapalabra-js/commit/04bd421d7271b93c4a7fe48419c775ff0e695be5))
+- Implement dynamic Content Security Policy using nonces for scripts and styles, and update Astro build configuration. ([13cb7a9](https://github.com/fjavidcr/pasapalabra-js/commit/13cb7a9192c0556dbb43d444b74e688960c6b5d4))
+- Implement HTTP security headers and enhance accessibility with ARIA attributes across game components. ([7e88ea5](https://github.com/fjavidcr/pasapalabra-js/commit/7e88ea50d049435c935512320d30da68ef5e4715))
+
+### Bug Fixes
+
+- Add 'unsafe-inline' to CSP scriptSrc and styleSrc directives for broader browser compatibility in production. ([c9d2e94](https://github.com/fjavidcr/pasapalabra-js/commit/c9d2e94b0ae49aa4903fa20d1f9d96b57ba8d04a))
+
 ## [0.8.0](https://github.com/fjavidcr/pasapalabra-js/compare/v0.6.0...v0.8.0) (2026-03-15)
 
 ### Features
