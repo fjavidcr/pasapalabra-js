@@ -25,19 +25,19 @@ export const onRequest = defineMiddleware(async (context, next) => {
   // Content Security Policy (CSP)
   const isDev = import.meta.env.DEV
 
-  // En producción usamos nonces, en desarrollo permitimos unsafe-inline
-  // El navegador IGNORA 'unsafe-inline' si hay un nonce, por lo que en dev NO ponemos el nonce
+  // En producción usamos nonces para SCRIPTS.
+  // Para ESTILOS, permitimos 'unsafe-inline' sin nonce para evitar bloqueos en atributos style="..."
+  // y estilos inyectados dinámicamente que son difíciles de trackear con nonces.
   const scriptSrc = ["'self'"]
-  const styleSrc = ["'self'", 'https://fonts.googleapis.com']
+  const styleSrc = ["'self'", 'https://fonts.googleapis.com', "'unsafe-inline'"]
 
   if (isDev) {
     scriptSrc.push("'unsafe-inline'")
-    styleSrc.push("'unsafe-inline'")
+    // En desarrollo ya tenemos 'unsafe-inline' en styleSrc
   } else {
-    // Solo en producción activamos la política estricta de nonces
+    // Solo en producción activamos la política estricta de nonces para SCRIPTS
     // Añadimos 'unsafe-inline' para compatibilidad con navegadores antiguos (los modernos lo ignorarán por el nonce)
     scriptSrc.push(`'nonce-${nonce}'`, "'unsafe-inline'")
-    styleSrc.push(`'nonce-${nonce}'`, "'unsafe-inline'")
   }
 
   const csp = [
@@ -53,6 +53,19 @@ export const onRequest = defineMiddleware(async (context, next) => {
   ].join('; ')
 
   response.headers.set('Content-Security-Policy', csp)
+
+  // Transformar la respuesta para inyectar nonces en todos los scripts
+  // Esto asegura que incluso los scripts inyectados por Astro/Vite tengan el nonce
+  if (response.headers.get('content-type')?.includes('text/html')) {
+    const body = await response.text()
+    // Inyectamos el nonce en todas las etiquetas <script> que no lo tengan
+    const transformedBody = body.replace(/<script(?![^>]*nonce=)/gi, `<script nonce="${nonce}"`)
+    return new Response(transformedBody, {
+      status: response.status,
+      statusText: response.statusText,
+      headers: response.headers
+    })
+  }
 
   return response
 })
