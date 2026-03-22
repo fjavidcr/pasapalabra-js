@@ -13,6 +13,8 @@
 </script>
 
 <div
+  role="list"
+  aria-label="Rosco de Pasapalabra"
   class="relative my-4 flex items-center justify-center rounded-full md:my-8"
   style="width: {game.roscoSize}px; height: {game.roscoSize}px;">
   {#each game.words as item, i (i)}
@@ -28,7 +30,9 @@
             ? 'pasada'
             : 'pendiente'}
     <div
-      aria-label="Letra {item.letter.toUpperCase()}: {statusLabel}{isActive ? ', actual' : ''}"
+      role="listitem"
+      aria-current={isActive ? 'step' : undefined}
+      aria-label="Letra {item.letter.toUpperCase()}: {statusLabel}"
       class={cn(
         'rosco-item absolute flex flex-col items-center justify-center rounded-full border-[3px] text-xl font-extrabold text-white backdrop-blur-sm',
         item.status === 'unanswered' || item.status === 'passed'
