@@ -12,8 +12,9 @@
   }
 </script>
 
-<div
-  class="relative my-4 flex items-center justify-center rounded-full md:my-8"
+<ul
+  aria-label="Rosco de letras"
+  class="relative m-0 my-4 flex list-none items-center justify-center rounded-full p-0 md:my-8"
   style="width: {game.roscoSize}px; height: {game.roscoSize}px;">
   {#each game.words as item, i (i)}
     {@const pos = getPosition(i, game.words.length, game.roscoSize / 2)}
@@ -27,8 +28,9 @@
           : item.status === 'passed'
             ? 'pasada'
             : 'pendiente'}
-    <div
+    <li
       aria-label="Letra {item.letter.toUpperCase()}: {statusLabel}{isActive ? ', actual' : ''}"
+      aria-current={isActive ? 'step' : undefined}
       class={cn(
         'rosco-item absolute flex flex-col items-center justify-center rounded-full border-[3px] text-xl font-extrabold text-white backdrop-blur-sm',
         item.status === 'unanswered' || item.status === 'passed'
@@ -50,9 +52,9 @@
         z-index: {isActive ? 10 : 1};
       ">
       {item.letter.toUpperCase()}
-    </div>
+    </li>
   {/each}
-</div>
+</ul>
 
 <style>
   .rosco-item {
