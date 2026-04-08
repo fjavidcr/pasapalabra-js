@@ -41,7 +41,7 @@
     "@astrojs/svelte": "^7.2.5",
     "@google/genai": "^1.44.0",
     "@tailwindcss/vite": "^4.2.1",
-    "astro": "^5.18.0",
+    "astro": "^5.18.1",
     "crypto-js": "^4.2.0",
     "svelte": "^5.53.8",
     "tailwindcss": "^4.2.1",
