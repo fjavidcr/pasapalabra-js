@@ -7,37 +7,51 @@
     CardHeader,
     CardTitle
   } from '$lib/components/ui/card'
+  import { fade, fly } from 'svelte/transition'
   import { Input } from '$lib/components/ui/input'
   import { getGameState } from '$lib/state/game.svelte'
 
   const game = getGameState()
+  let inputRef = $state<HTMLInputElement | null>(null)
+
+  // Re-enfocar el input automáticamente cuando cambia de letra
+  $effect(() => {
+    if (game.currentIndex !== undefined && inputRef) {
+      inputRef.focus()
+    }
+  })
 </script>
 
 <Card
   class="glass-card animate-in slide-in-from-bottom-6 fade-in w-full border-white/20 duration-500 dark:border-white/10">
-  <CardHeader
-    class="border-border/50 flex flex-col items-center gap-6 border-b px-6 pt-8 pb-6 text-center sm:flex-row sm:items-start sm:px-8 sm:text-left">
-    <div
-      class="bg-primary/10 ring-primary/20 inline-flex h-20 w-20 shrink-0 items-center justify-center rounded-full shadow-inner ring-4">
-      <CardTitle
-        aria-label="Letra {game.currentItem.letter.toUpperCase()}"
-        class="text-primary text-glow text-6xl font-black tracking-tight uppercase">
-        {game.currentItem.letter}
-      </CardTitle>
+  {#key game.currentIndex}
+    <div in:fly={{ y: 20, duration: 400, delay: 200 }} out:fade={{ duration: 200 }}>
+      <CardHeader
+        class="border-border/50 flex flex-col items-center gap-6 border-b px-6 pt-8 pb-6 text-center sm:flex-row sm:items-start sm:px-8 sm:text-left">
+        <div
+          class="bg-primary/10 ring-primary/20 inline-flex h-20 w-20 shrink-0 items-center justify-center rounded-full shadow-inner ring-4">
+          <CardTitle
+            aria-label="Letra {game.currentItem.letter.toUpperCase()}"
+            class="text-primary text-glow text-6xl font-black tracking-tight uppercase">
+            {game.currentItem.letter}
+          </CardTitle>
+        </div>
+        <div class="flex flex-col justify-center pt-1 sm:pt-2">
+          <CardDescription
+            id="definition-text"
+            aria-live="polite"
+            class="text-foreground text-xl leading-relaxed font-medium sm:text-2xl">
+            <span
+              class="from-primary mr-2 bg-linear-to-r to-purple-500 bg-clip-text font-bold text-transparent">
+              {game.currentItem.type === 'INCLUDES' ? 'Contiene la' : 'Empieza por la'}
+              {game.currentItem.letter.toUpperCase()}:
+            </span>
+            {game.currentItem.definition}
+          </CardDescription>
+        </div>
+      </CardHeader>
     </div>
-    <div class="flex flex-col justify-center pt-1 sm:pt-2">
-      <CardDescription
-        aria-live="polite"
-        class="text-foreground text-xl leading-relaxed font-medium sm:text-2xl">
-        <span
-          class="from-primary mr-2 bg-linear-to-r to-purple-500 bg-clip-text font-bold text-transparent">
-          {game.currentItem.type === 'INCLUDES' ? 'Contiene la' : 'Empieza por la'}
-          {game.currentItem.letter.toUpperCase()}:
-        </span>
-        {game.currentItem.definition}
-      </CardDescription>
-    </div>
-  </CardHeader>
+  {/key}
   <CardContent class="px-6 pt-8 pb-8 sm:px-8">
     <form
       onsubmit={(e) => {
@@ -50,10 +64,13 @@
           class="from-primary/50 absolute -inset-0.5 rounded-lg bg-linear-to-r to-purple-500/50 opacity-20 blur transition duration-500 group-focus-within:opacity-100">
         </div>
         <Input
+          bind:ref={inputRef}
           bind:value={game.answer}
           placeholder="Escribe tu respuesta..."
           aria-label="Escribe tu respuesta para la letra {game.currentItem.letter.toUpperCase()}"
+          aria-describedby="definition-text"
           autocomplete="off"
+          maxlength="100"
           class="focus-visible:border-primary/50 focus-visible:ring-primary/30 relative rounded-xl border-2 border-transparent bg-white/80 py-8 text-center text-2xl font-bold shadow-inner transition-all dark:bg-slate-900/80"
           autofocus />
       </div>
@@ -64,6 +81,7 @@
           </div>
           <Button
             type="submit"
+            disabled={!game.answer.trim()}
             class="relative h-14 w-full text-lg font-bold shadow-xl transition-all duration-300 hover:-translate-y-1"
             size="lg">
             Enviar Respuesta
